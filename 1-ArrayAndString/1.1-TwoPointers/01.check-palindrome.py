@@ -3,9 +3,6 @@
 # That means, after reversing it, it is still the same string.
 # For example: "abcdcba", or "racecar".
 
-# -> use 2-pointers technique
-
-
 def is_palindrome(s: str) -> bool:
     left = 0
     right = len(s) - 1

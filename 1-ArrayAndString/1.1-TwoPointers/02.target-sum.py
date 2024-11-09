@@ -4,8 +4,6 @@
 # For example, given nums = [1, 2, 4, 6, 8, 9, 14, 15] and target = 13,
 # return true because 4 + 9 = 13.
 
-# -> use 2-pointers technique
-
 
 def target_sum(nums: list[int], target: int) -> bool:
     left = 0
