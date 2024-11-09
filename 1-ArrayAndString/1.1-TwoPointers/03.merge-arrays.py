@@ -1,8 +1,10 @@
 # Given two sorted integer arrays arr1 and arr2,
 # return a new array that combines both of them and is also sorted
 
+from typing import List
 
-def merge(arr1: list[int], arr2: list[int]) -> list[int]:
+
+def merge(arr1: List[int], arr2: List[int]) -> list[int]:
     result = []
     i = 0
     j = 0
