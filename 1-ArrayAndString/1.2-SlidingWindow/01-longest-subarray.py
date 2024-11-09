@@ -3,7 +3,7 @@
 
 from typing import List
 
-def longest_run(nums: List[int], k: int) -> int:
+def longest_subarray(nums: List[int], k: int) -> int:
     left = 0
     current_sum = 0
     max_length = 0
