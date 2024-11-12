@@ -15,7 +15,38 @@ def ways_to_split_array(nums: List[int]) -> int:
     for i in range(len(nums) - 1):
         left_sum = prefix_sum[i]
         right_sum = prefix_sum[-1] - prefix_sum[i]
+
         if left_sum > right_sum:
             count_ways += 1
 
     return count_ways
+
+
+# Time complexity: O(n)
+# Space complexity: O(n) - for the prefix sum array
+
+
+# ==============================
+
+
+# Reduce space complexity
+def ways_to_split_array_2(nums: List[int]) -> int:
+    total = 0
+    for num in nums:
+        total += num
+
+    count_ways = 0
+    left_sum = 0
+
+    for i in range(len(nums) - 1):
+        left_sum += nums[i]
+        right_sum = total - left_sum
+
+        if left_sum > right_sum:
+            count_ways += 1
+
+    return count_ways
+
+
+# Time complexity: O(n)
+# Space complexity: O(1)
