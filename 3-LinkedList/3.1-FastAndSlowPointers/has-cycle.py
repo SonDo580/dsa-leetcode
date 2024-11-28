@@ -17,7 +17,7 @@
 class ListNode:
     def __init__(self, val) -> None:
         self.val = val
-        self.next = next
+        self.next = None
 
 def has_cycle(head: ListNode) -> bool: 
     slow = head

@@ -8,7 +8,7 @@
 class ListNode:
     def __init__(self, val) -> None:
         self.val = val
-        self.next = next
+        self.next = None
 
 # Use slow and fast pointers
 def get_middle(head: ListNode):
