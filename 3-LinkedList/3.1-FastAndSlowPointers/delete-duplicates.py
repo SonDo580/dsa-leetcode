@@ -21,6 +21,7 @@ class ListNode:
         self.val = val
         self.next = None
 
+
 def delete_duplicates(head: ListNode) -> ListNode:
     if head is None:
         return head
@@ -34,8 +35,28 @@ def delete_duplicates(head: ListNode) -> ListNode:
             fast = fast.next
         slow.next = fast
 
-        # move slow to current position of fast 
+        # move slow to current position of fast
         slow = fast
 
-    return head 
+    return head
 
+# ====================
+# Improve: use 1 pointer
+def delete_duplicates_v1(head: ListNode) -> ListNode:
+    if head is None:
+        return head
+
+    current = head
+    while current and current.next:
+        if current.val == current.next.val:
+            # skip the duplicate node
+            current.next = current.next.next
+        else:
+            # move to the next node
+            current = current.next
+
+    return head
+
+
+# Time complexity: O(n)
+# Space complexity: O(1) - for 'current' pointer
