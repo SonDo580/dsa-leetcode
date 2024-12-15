@@ -27,3 +27,20 @@ def post_order_dfs(node):
     pre_order_dfs(node.left)
     pre_order_dfs(node.right)
     print(node.val)
+
+# Iterative approach
+def pre_order_dfs_iterative(root):
+    if not root:
+        return
+
+    stack = [root]
+
+    while len(stack) > 0:
+        node = stack.pop()
+        print(node.val)
+
+        if node.left:
+            stack.append(node.left)
+
+        if node.right:
+            stack.append(node.right)
