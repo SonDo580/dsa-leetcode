@@ -53,3 +53,5 @@ def has_path_sum_iterative(root: TreeNode, target_sum: int) -> bool:
             stack.append((node.left, current_sum))
         if node.right:
             stack.append((node.right, current_sum))
+    
+    return False
