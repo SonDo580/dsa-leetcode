@@ -11,7 +11,7 @@ class TreeNode:
         self.right = right
 
 
-def has_path_sum(root: TreeNode, target_sum: int) -> bool:
+def has_path_sum_recursive(root: TreeNode, target_sum: int) -> bool:
     def dfs(node, current_sum):
         """
         Return true if a path starting with node has a sum
@@ -32,3 +32,24 @@ def has_path_sum(root: TreeNode, target_sum: int) -> bool:
         return dfs(node.left, current_sum) or dfs(node.right, current_sum)
 
     return dfs(root, 0)
+
+def has_path_sum_iterative(root: TreeNode, target_sum: int) -> bool:
+    if not root:
+        return False
+    
+    # store both the node and current sum along that path
+    stack = [(root, 0)] 
+
+    while len(stack) > 0:
+        node, current_sum = stack.pop()
+        current_sum += node.val
+
+        # check if the node is a leaf
+        if not node.left and not node.right:
+            if current_sum == target_sum:
+                return True
+        
+        if node.left:
+            stack.append((node.left, current_sum))
+        if node.right:
+            stack.append((node.right, current_sum))
