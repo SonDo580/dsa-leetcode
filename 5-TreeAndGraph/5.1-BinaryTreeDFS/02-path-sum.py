@@ -33,12 +33,13 @@ def has_path_sum_recursive(root: TreeNode, target_sum: int) -> bool:
 
     return dfs(root, 0)
 
+
 def has_path_sum_iterative(root: TreeNode, target_sum: int) -> bool:
     if not root:
         return False
-    
+
     # store both the node and current sum along that path
-    stack = [(root, 0)] 
+    stack = [(root, 0)]
 
     while len(stack) > 0:
         node, current_sum = stack.pop()
@@ -48,10 +49,20 @@ def has_path_sum_iterative(root: TreeNode, target_sum: int) -> bool:
         if not node.left and not node.right:
             if current_sum == target_sum:
                 return True
-        
+
         if node.left:
             stack.append((node.left, current_sum))
         if node.right:
             stack.append((node.right, current_sum))
-    
+
     return False
+
+
+# ===== Analysis =====
+# Time complexity: O(n) where n is the number of nodes
+
+# Space complexity: proportional to the height of the tree
+# - worst case: O(n) when the tree is a straight line
+# - best case: Ω(log n) when the tree is 'complete'
+
+# complete tree: all nodes have 0 or 2 children and each level except the last is full
