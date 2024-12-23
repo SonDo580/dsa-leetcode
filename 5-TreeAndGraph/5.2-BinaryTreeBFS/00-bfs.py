@@ -19,3 +19,11 @@ def bfs(root: TreeNode):
             queue.append(node.left)
         if node.right:
             queue.append(node.right)
+
+
+# ===== Analyze =====
+#
+# Time complexity:
+# - With an efficient queue, the dequeue and enqueue operations are O(1)
+# - We visit each node only once
+# -> Overall: O(n) - same as DFS
