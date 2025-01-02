@@ -34,6 +34,17 @@ def count_provinces(is_connected: List[List[int]]) -> int:
             if neighbor not in seen:
                 dfs(neighbor)
 
+    def dfs_iterative(start):
+        """Same functionality as dfs. Iterative implementation"""
+        stack = [start]
+        while len(stack) > 0:
+            node = stack.pop()
+            seen.add(start)
+
+            for neighbor in graph[node]:
+                if neighbor not in seen:
+                    stack.append(neighbor)
+
     seen = set()  # track visited nodes
     count = 0  # track number of connected components
 
