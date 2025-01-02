@@ -66,3 +66,23 @@ def count_provinces(is_connected: List[List[int]]) -> int:
 
             # visit all node of the current connected component
             dfs(i)
+
+
+# ===== Complexity =====
+# - n is the number of nodes
+# - e is the number of edges
+#
+# Worst case: every node is connected with every other node -> e = n^2
+#
+# Time complexity:
+# - DFS on graph: O(n + e)
+#   + each node is visited once
+#   + each edge is visited twice (we had the visited check to prevent cycles)
+# - Build the adjacency list: O(n^2)
+# => Overall: O(n^2)
+#
+# Space complexity:
+# - Recursion call stack: O(n)
+# - Seen set: O(n)
+# - The graph (adjacency list): O(e) for storing the edges
+# => Overall: O(n + e)
