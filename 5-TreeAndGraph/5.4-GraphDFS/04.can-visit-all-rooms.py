@@ -20,11 +20,9 @@ from typing import List
 
 
 def can_visit_all_rooms_recursive(rooms: List[List[int]]) -> bool:
-    seen = set()
+    seen = {0}
 
     def dfs(node):
-        seen.add(node)
-
         for neighbor in rooms[node]:
             if neighbor not in seen:
                 seen.add(neighbor)
@@ -36,15 +34,15 @@ def can_visit_all_rooms_recursive(rooms: List[List[int]]) -> bool:
 
 
 def can_visit_all_rooms_iterative(rooms: List[List[int]]) -> bool:
-    seen = set()
+    seen = {0}
     stack = [0]
 
     while len(stack) > 0:
         node = stack.pop()
-        seen.add(node)
 
         for neighbor in rooms[node]:
             if neighbor not in seen:
+                seen.add(neighbor)
                 stack.append(neighbor)
 
     return len(seen) == len(rooms)

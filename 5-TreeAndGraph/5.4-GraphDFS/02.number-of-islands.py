@@ -27,16 +27,12 @@ def count_islands(grid: List[List[int]]) -> int:
 
     def dfs(row, col):
         """Visit all nodes in a connected component"""
-
-        # mark the current node as visited
-        seen.add((row, col))
-
-        # visit the neighbors
         for dy, dx in directions:
             next_row = row + dy
             next_col = col + dx
 
             if is_valid(next_row, next_col) and (next_row, next_col) not in seen:
+                seen.add((next_row, next_col))
                 dfs(next_row, next_col)
 
     def dfs_iterative(start_row, start_col):
@@ -57,6 +53,7 @@ def count_islands(grid: List[List[int]]) -> int:
         for col in range(n):
             if grid[row][col] == 1 and (row, col) not in seen:
                 count += 1
+                seen.add((row, col))
                 dfs(row, col)
 
     return count

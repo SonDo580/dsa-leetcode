@@ -30,7 +30,7 @@ def shortest_path_length(grid: List[List[int]]) -> int:
     def is_bottom_right(row, col):
         return row == n - 1 and col == n - 1
 
-    seen = set()  # track visited nodes
+    seen = {(0, 0)}  # track visited nodes
     queue = deque[(0, 0, 1)]  # row, col, path_length
 
     # up, down, left, right, top-left, top-right, bottom-left, bottom-right
@@ -38,9 +38,6 @@ def shortest_path_length(grid: List[List[int]]) -> int:
 
     while len(queue) > 0:
         row, col, path_length = queue.popleft()
-
-        # mark the node as visited
-        seen.add((next_row, next_col))
 
         # check if bottom-right cell has been reached
         if is_bottom_right(row, col):
@@ -52,6 +49,9 @@ def shortest_path_length(grid: List[List[int]]) -> int:
             next_col = col + dx
 
             if is_valid(next_row, next_col) and (next_row, next_col) not in seen:
+                # mark the node as visited
+                seen.add((next_row, next_col))
+
                 # add the valid neighbors to the queue
                 # increment the path length
                 queue.append((next_row, next_col, path_length + 1))

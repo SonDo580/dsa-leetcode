@@ -20,18 +20,16 @@ from collections import defaultdict
 def min_reorder_recursive(connections: List[List[int]]) -> int:
     roads = set()  # to fast-check if an edge is in 'connections'
     graph = defaultdict(list)  # represent as adjacency list
-    seen = set()  # track visited nodes
 
     for x, y in connections:
         graph[x].append(y)
         graph[y].append(x)
         roads.add((x, y))
 
+    seen = {0}  # track visited nodes
+
     def dfs(node):
         swap_count = 0  # number of swaps needed
-
-        # mark the node as visited
-        seen.add(node)
 
         # visit the neighbors
         for neighbor in graph[node]:
@@ -40,6 +38,9 @@ def min_reorder_recursive(connections: List[List[int]]) -> int:
                 # So if the edge is in 'connections', we need to swap it.
                 if (node, neighbor) in roads:
                     swap_count += 1
+
+                # mark the neighbor as visited
+                seen.add(neighbor)
 
                 swap_count += dfs(neighbor)
 
@@ -57,17 +58,18 @@ def min_reorder_iterative(connections: List[List[int]]) -> int:
         roads.add((x, y))
 
     swap_count = 0
-    seen = set()
+    seen = {0}
     stack = [0]
 
     while len(stack) > 0:
         node = stack.pop()
-        seen.add(node)
 
         for neighbor in graph[node]:
             if neighbor not in seen:
                 if (node, neighbor) in roads:
                     swap_count += 1
+                    
+                seen.add(neighbor)
                 stack.append(neighbor)
 
     return swap_count

@@ -23,15 +23,14 @@ from collections import defaultdict
 
 
 def count_provinces(is_connected: List[List[int]]) -> int:
+    seen = set()  # track visited nodes
+    
     def dfs(node):
         """Function to visit all nodes in a connected component"""
-        # mark the current node as visited
-        seen.add(node)
-
-        # visit the neighbors
         for neighbor in graph[node]:
             # check if the node has been visited to prevent cycles
             if neighbor not in seen:
+                seen.add(neighbor)
                 dfs(neighbor)
 
     def dfs_iterative(start):
@@ -39,14 +38,11 @@ def count_provinces(is_connected: List[List[int]]) -> int:
         stack = [start]
         while len(stack) > 0:
             node = stack.pop()
-            seen.add(start)
 
             for neighbor in graph[node]:
                 if neighbor not in seen:
+                    seen.add(neighbor)
                     stack.append(neighbor)
-
-    seen = set()  # track visited nodes
-    count = 0  # track number of connected components
 
     # convert the adjacency matrix to an adjacency list
     n = len(is_connected)
@@ -58,13 +54,15 @@ def count_provinces(is_connected: List[List[int]]) -> int:
                 graph[i].append(j)
                 graph[j].append(i)
 
+    count = 0  # track number of connected components
+
     for i in range(n):
-        # if a node hasn't been visited before, it must belong to a new connected component
         if i not in seen:
-            # increment the number of connected components
+            # if a node hasn't been visited before, it must belong to a new connected component
             count += 1
 
             # visit all node of the current connected component
+            seen.add(i)
             dfs(i)
 
 
