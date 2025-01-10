@@ -101,3 +101,13 @@ def simplify_path(path: str) -> str:
 
     # Form the simplified canonical path
     return "".join(stack)
+
+# ===== Complexity =====
+# 
+# Time complexity:
+# - Loop through the path string: O(n)
+# - Pop characters from the stack for double period: O(n) across all iterations
+# => Overall: O(n)
+#
+# Space complexity: O(n)
+# - Space for the stack
