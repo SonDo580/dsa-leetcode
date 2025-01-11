@@ -61,7 +61,7 @@ def simplify_path(path: str) -> str:
 
     for i in range(n):
         # Handle consecutive slashes
-        if stack[-1] == "/" and path[i] == '/':
+        if stack[-1] == "/" and path[i] == "/":
             continue
 
         # Handle single period (current directory)
@@ -76,10 +76,15 @@ def simplify_path(path: str) -> str:
         # [a]/[b]/../[c] -> [a]//[c] (the extra '/' will be skipped in the next iteration)
         # [a]/[b]/..END -> [a]/END (the extra '/' will be skipped in the next iteration)
         # /../[b] -> //[b] (keep the root)
-        if stack[-1] == "." and stack[-2] == "/" and path[i] == "." and (i == n - 1 or path[i + 1] == "/"):
+        if (
+            stack[-1] == "."
+            and stack[-2] == "/"
+            and path[i] == "."
+            and (i == n - 1 or path[i + 1] == "/")
+        ):
             # Remove the current directory to go back to the parent directory
             # unless it is the root directory
-            # -> keep popping characters from the stack until 
+            # -> keep popping characters from the stack until
             # + encountering a second '/' (remove 1 '/')
             # + OR the stack only has 1 character left
             slash_removed = False
@@ -102,12 +107,55 @@ def simplify_path(path: str) -> str:
     # Form the simplified canonical path
     return "".join(stack)
 
+
 # ===== Complexity =====
-# 
+#
 # Time complexity:
 # - Loop through the path string: O(n)
 # - Pop characters from the stack for double period: O(n) across all iterations
+# - Combining characters from the stack: O(n)
 # => Overall: O(n)
 #
 # Space complexity: O(n)
 # - Space for the stack
+
+
+# ***** SECOND IMPLEMENTATION *****
+# Operate on each path segments instead of on individual characters
+
+
+def simplify_path_v2(path: str) -> str:
+    # The stack to store path segments
+    stack: List[str] = []
+
+    # Split the path into segments
+    segments = path.split("/")
+
+    for segment in segments:
+        # Handle single period and consecutive slashes
+        if segment == "." or segment == "":
+            continue
+
+        # Handle double period
+        if segment == "..":
+            if len(stack) > 0:
+                stack.pop()
+            continue
+
+        stack.append(segment)
+
+    # Combined the root directory and the segments on the stack
+    return "/" + "/".join(stack)
+
+
+# ===== Complexity =====
+#
+# Time complexity: O(n)
+# - Split the path string: O(n)
+# - Iterate through the segments: O(n)
+# - Pop characters from the stack for double period: O(n) across iterations
+# - Combining characters from the stack: O(n)
+#
+# Space complexity: O(n)
+# - Space for the stack: O(n)
+# - Space for the 'segments' array: O(n)
