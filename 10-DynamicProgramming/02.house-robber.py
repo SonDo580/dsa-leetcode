@@ -20,10 +20,10 @@
 # + dp[1] = max(nums[0], nums[1]) -> rob the house with more money
 
 # ===== Implementation =====
-# - Create a dp array of size n + 1, where n is the number of house
+# - Create a dp array of size n, where n is the number of house
 # - Initialize dp[0] and dp[1]
-# - Iterate from 2 to n, filling in dp[i]
-# - Return dp[n], which contains the maximum money that can be robbed
+# - Iterate from 2 to n-1 (inclusive), filling in dp[i]
+# - Return dp[n-1], which contains the maximum money that can be robbed
 #
 # * Optimizing space: 
 # - Only track the last 2 values instead of using a full dp array
