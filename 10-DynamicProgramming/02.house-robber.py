@@ -47,6 +47,6 @@ def rob_house(nums: list[int]) -> int:
 
     return prev1 
 
-
-
-
+# ===== Complexity =====
+# Time complexity: O(n)
+# Space complexity: O(1)
