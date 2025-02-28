@@ -3,10 +3,7 @@
 
 # => fixed-length window
 
-from typing import List
-
-
-def subarray_max_sum(nums: List[int], k: int) -> int:
+def subarray_max_sum(nums: list[int], k: int) -> int:
     # build the first window
     current_sum = 0
     for i in range(k):

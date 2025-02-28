@@ -22,9 +22,7 @@
 # => Reframe the question:
 # The longest subarray that contains at most k zeros
 
-from typing import List
-
-def longest_ones(nums: List[int], k: int) -> int:
+def longest_ones(nums: list[int], k: int) -> int:
     left = 0
     count_zero = 0
     max_length = 0

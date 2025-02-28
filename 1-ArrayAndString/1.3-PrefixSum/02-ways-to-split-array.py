@@ -3,10 +3,7 @@
 # has a sum greater than or equal to the sum of the second section.
 # The second section should have at least one number.
 
-from typing import List
-
-
-def ways_to_split_array(nums: List[int]) -> int:
+def ways_to_split_array(nums: list[int]) -> int:
     prefix_sum = [nums[0]]
     for i in range(1, len(nums)):
         prefix_sum.append(nums[i] + prefix_sum[-1])
@@ -30,7 +27,7 @@ def ways_to_split_array(nums: List[int]) -> int:
 
 
 # Reduce space complexity
-def ways_to_split_array_2(nums: List[int]) -> int:
+def ways_to_split_array_2(nums: list[int]) -> int:
     total = 0
     for num in nums:
         total += num

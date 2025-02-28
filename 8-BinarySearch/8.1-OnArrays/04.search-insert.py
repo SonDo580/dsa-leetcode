@@ -21,9 +21,7 @@
 # nums contains distinct values sorted in ascending order.
 # -10^4 <= target <= 10^4
 
-from typing import List
-
-def search_insert(nums: List[int], target: int) -> int:
+def search_insert(nums: list[int], target: int) -> int:
     left = 0
     right = len(nums) - 1
 

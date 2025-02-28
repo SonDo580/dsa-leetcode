@@ -18,11 +18,10 @@
 # - a connected component is a maximal set of vertices such that
 #   there exists a path between every pair of vertices within the set.
 
-from typing import List
 from collections import defaultdict
 
 
-def count_provinces(is_connected: List[List[int]]) -> int:
+def count_provinces(is_connected: list[list[int]]) -> int:
     seen = set()  # track visited nodes
     
     def dfs(node):

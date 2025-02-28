@@ -5,7 +5,6 @@
 # Reframe: Find values of all rightmost nodes at each level
 
 from collections import deque
-from typing import List
 
 
 class TreeNode:
@@ -15,7 +14,7 @@ class TreeNode:
         self.right = right
 
 
-def right_side_view(root: TreeNode) -> List[int]:
+def right_side_view(root: TreeNode) -> list[int]:
     if not root:
         return []
 

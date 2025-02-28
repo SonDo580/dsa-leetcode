@@ -37,9 +37,7 @@
 #   . min_start_value should be a positive integer
 # - no need to build the array, just track the minimum value
 
-from typing import List
-
-def min_start_value(nums: List[int]) -> int:
+def min_start_value(nums: list[int]) -> int:
     current_prefix_sum = nums[0]
     min_prefix_sum = current_prefix_sum
 

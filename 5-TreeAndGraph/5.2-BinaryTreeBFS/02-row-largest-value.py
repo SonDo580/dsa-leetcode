@@ -2,7 +2,6 @@
 # return an array of the largest value in each row of the tree.
 
 from collections import deque
-from typing import List
 
 
 class TreeNode:
@@ -12,7 +11,7 @@ class TreeNode:
         self.right = right
 
 
-def largest_values(root: TreeNode) -> List[int]:
+def largest_values(root: TreeNode) -> list[int]:
     if not root:
         return []
 

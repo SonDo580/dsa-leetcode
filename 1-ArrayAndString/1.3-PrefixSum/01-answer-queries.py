@@ -10,10 +10,7 @@
 # the answer is [true, false, true].
 # For each query, the subarray sums are [12, 14, 12].
 
-from typing import List
-
-
-def answer_queries(nums: List[int], queries: List[int], limit: int) -> List[bool]:
+def answer_queries(nums: list[int], queries: list[int], limit: int) -> list[bool]:
     # build the prefix sum array in O(n)
     prefix_sum = [nums[0]]
     for i in range(1, len(nums)):

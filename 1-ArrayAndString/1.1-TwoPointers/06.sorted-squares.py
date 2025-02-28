@@ -17,10 +17,7 @@
 # -10^4 <= nums[i] <= 10^4
 # nums is sorted in non-decreasing order.
 
-from typing import List
-
-
-def sorted_squares(nums: List[int]) -> List[int]:
+def sorted_squares(nums: list[int]) -> list[int]:
     n = len(nums)
     squares = [None] * len(nums)
 

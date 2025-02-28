@@ -34,15 +34,12 @@
 #   pop the latest item from the stack and move to the next character
 # - In the end, combine all the remaining characters in the stack
 
-from typing import List
-
-
 def make_string_good(s: str) -> str:
     # An empty string is a good string
     if len(s) == 0:
         return s
 
-    stack: List[str] = []
+    stack: list[str] = []
 
     def is_bad(char: str):
         """

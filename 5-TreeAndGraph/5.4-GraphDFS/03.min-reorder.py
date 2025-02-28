@@ -13,11 +13,10 @@
 # - start traversing from city 0, treat the graph as undirected
 # - every time we see an edge pointing away, swap it and increment the count
 
-from typing import List
 from collections import defaultdict
 
 
-def min_reorder_recursive(connections: List[List[int]]) -> int:
+def min_reorder_recursive(connections: list[list[int]]) -> int:
     roads = set()  # to fast-check if an edge is in 'connections'
     graph = defaultdict(list)  # represent as adjacency list
 
@@ -49,7 +48,7 @@ def min_reorder_recursive(connections: List[List[int]]) -> int:
     return dfs(0)  # start from 0
 
 
-def min_reorder_iterative(connections: List[List[int]]) -> int:
+def min_reorder_iterative(connections: list[list[int]]) -> int:
     roads = set()
     graph = defaultdict(list)
     for x, y in connections:

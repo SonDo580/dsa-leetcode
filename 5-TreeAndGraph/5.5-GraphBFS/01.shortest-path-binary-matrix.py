@@ -14,11 +14,10 @@
 #   (with BFS, the first time we visit a node, it is guaranteed that
 #    we reached it with the fewest steps possible)
 
-from typing import List
 from collections import deque
 
 
-def shortest_path_length(grid: List[List[int]]) -> int:
+def shortest_path_length(grid: list[list[int]]) -> int:
     if grid[0][0] == 1:
         return -1
 

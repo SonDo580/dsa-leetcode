@@ -2,10 +2,7 @@
 # find all the unique numbers x in nums that satisfy the following:
 # x + 1 is not in nums, and x - 1 is not in nums.
 
-from typing import List
-
-
-def find_numbers(nums: List[int]) -> List[int]:
+def find_numbers(nums: list[int]) -> list[int]:
     result = []
     num_set = set(nums)
 

@@ -1,9 +1,7 @@
 # Given an array of positive integers nums and an integer k, find the length 
 # of the longest subarray whose sum is less than or equal to k.
 
-from typing import List
-
-def longest_subarray(nums: List[int], k: int) -> int:
+def longest_subarray(nums: list[int], k: int) -> int:
     left = 0
     current_sum = 0
     max_length = 0

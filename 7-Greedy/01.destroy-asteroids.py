@@ -12,9 +12,7 @@
 #   If that's not possible, we cannot destroy all asteroids.
 # -> We can sort the asteroids array then iterate through it once.
 
-from typing import List
-
-def can_destroy_all_asteroids(mass: int, asteroids: List[int]) -> bool:
+def can_destroy_all_asteroids(mass: int, asteroids: list[int]) -> bool:
     # sort the asteroids' masses array in ascending order
     asteroids.sort()
 

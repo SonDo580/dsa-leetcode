@@ -42,10 +42,7 @@
 # 1 <= n <= 10^5
 # 0 <= nums[i], k <= 10^5
 
-from typing import List
-
-
-def get_k_radius_averages(nums: List[int], k: int) -> List[int]:
+def get_k_radius_averages(nums: list[int], k: int) -> list[int]:
     if k == 0:
         return nums
 

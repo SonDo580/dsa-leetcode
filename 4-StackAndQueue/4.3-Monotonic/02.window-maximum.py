@@ -31,16 +31,16 @@
 # - We need to keep track of the window size
 #   -> store the indices instead of the values
 
-from typing import List, Deque
 from collections import deque
 
-def window_maximum(nums: List[int], k: int) -> List[int]:
+
+def window_maximum(nums: list[int], k: int) -> list[int]:
     # Store the maximum number in each window
-    answers: List[int] = []
+    answers: list[int] = []
 
     # Store the indices to track the window size
     # The associated values must be in non-increasing order
-    queue: Deque[int] = deque()
+    queue: deque[int] = deque()
 
     for i in range(len(nums)):
         # Get rid of the indices with values smaller than the current one
@@ -62,7 +62,7 @@ def window_maximum(nums: List[int], k: int) -> List[int]:
         if i >= k - 1:
             answers.append(nums[queue[0]])
 
-    return 
+    return answers
 
 # ===== Complexity =====
 # 

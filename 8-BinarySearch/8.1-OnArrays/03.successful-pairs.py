@@ -22,10 +22,7 @@
 # - All the potions from that point can form a successful pair with the current spell
 #   -> count = m - i
 
-from typing import List
-
-
-def successful_pairs(spells: List[int], potions: List[int], success: int) -> List[int]:
+def successful_pairs(spells: list[int], potions: list[int], success: int) -> list[int]:
     def find_insertion_point(arr, target):
         left = 0
         right = len(arr) - 1

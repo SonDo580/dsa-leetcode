@@ -49,15 +49,11 @@
 # - path consists of English letters, digits, period '.', slash '/' or '_'.
 # - path is a valid absolute Unix path.
 
-
-from typing import List
-
-
 def simplify_path(path: str) -> str:
     n = len(path)
 
     # The first '/' (root directory) always remains in the stack
-    stack: List[str] = [path[0]]
+    stack: list[str] = [path[0]]
 
     for i in range(n):
         # Handle consecutive slashes
@@ -126,7 +122,7 @@ def simplify_path(path: str) -> str:
 
 def simplify_path_v2(path: str) -> str:
     # The stack to store path segments
-    stack: List[str] = []
+    stack: list[str] = []
 
     # Split the path into segments
     segments = path.split("/")

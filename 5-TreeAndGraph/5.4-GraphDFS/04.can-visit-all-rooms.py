@@ -16,10 +16,7 @@
 # - start a DFS from room 0 and see if we can visit every node
 #   (use a set and check the length, or a boolean array)
 
-from typing import List
-
-
-def can_visit_all_rooms_recursive(rooms: List[List[int]]) -> bool:
+def can_visit_all_rooms_recursive(rooms: list[list[int]]) -> bool:
     seen = {0}
 
     def dfs(node):
@@ -33,7 +30,7 @@ def can_visit_all_rooms_recursive(rooms: List[List[int]]) -> bool:
     return len(seen) == len(rooms)
 
 
-def can_visit_all_rooms_iterative(rooms: List[List[int]]) -> bool:
+def can_visit_all_rooms_iterative(rooms: list[list[int]]) -> bool:
     seen = {0}
     stack = [0]
 

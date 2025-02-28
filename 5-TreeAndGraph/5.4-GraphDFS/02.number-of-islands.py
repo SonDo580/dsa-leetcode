@@ -7,10 +7,7 @@
 # - The problem is asking for the number of connected components
 # - The graph is undirected
 
-from typing import List
-
-
-def count_islands(grid: List[List[int]]) -> int:
+def count_islands(grid: list[list[int]]) -> int:
     m = len(grid)  # number of rows
     n = len(grid[0])  # number of columns
 

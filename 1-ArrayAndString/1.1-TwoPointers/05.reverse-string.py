@@ -15,9 +15,7 @@
 # 1 <= s.length <= 10^5
 # s[i] is a printable ascii character.
 
-from typing import List
-
-def reverseString(s: List[str]) -> None:
+def reverseString(s: list[str]) -> None:
     """
     Do not return anything, modify s in-place instead.
     """

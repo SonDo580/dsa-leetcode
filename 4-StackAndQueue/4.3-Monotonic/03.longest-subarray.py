@@ -10,17 +10,15 @@
 #   -> use a monotonic data structure for efficient check
 # => use 2 double-ended queues to track the maximum / minimum item in the window
 
-
-from typing import List, Deque
 from collections import deque
 
 
-def longest_subarray(nums: List[int], limit: int) -> int:
+def longest_subarray(nums: list[int], limit: int) -> int:
     # The first item is the minimum item of the current window
-    increasing_queue: Deque[int] = deque()
+    increasing_queue: deque[int] = deque()
 
     # The first item is the maximum item of the current window
-    decreasing_queue: Deque[int] = deque()
+    decreasing_queue: deque[int] = deque()
 
     max_subarray_length = 0
 

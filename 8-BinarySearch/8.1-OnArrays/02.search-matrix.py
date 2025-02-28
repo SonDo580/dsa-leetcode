@@ -9,10 +9,7 @@
 #   + the row increment every n indices -> row = i // n
 #   + the column reset to 0 every n indices -> col = i % n
 
-from typing import List
-
-
-def search_matrix(matrix: List[List[int]], target: int) -> bool:
+def search_matrix(matrix: list[list[int]], target: int) -> bool:
     m = len(matrix)  # number of rows
     n = len(matrix[0])  # number of columns
 

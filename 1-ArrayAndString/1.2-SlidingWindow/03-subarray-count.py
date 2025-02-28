@@ -7,9 +7,7 @@
 # 
 # [10], [5], [2], [6], [10, 5], [5, 2], [2, 6], [5, 2, 6]
 
-from typing import List
-
-def subarray_count(nums: List[int], k: int) -> int:
+def subarray_count(nums: list[int], k: int) -> int:
     if k <= 1:
         return 0
     

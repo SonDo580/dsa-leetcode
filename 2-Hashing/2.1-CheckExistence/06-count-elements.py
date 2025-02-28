@@ -16,10 +16,7 @@
 # 1 <= arr.length <= 1000
 # 0 <= arr[i] <= 1000
 
-from typing import List
-
-
-def count_elements(arr: List[int]) -> int:
+def count_elements(arr: list[int]) -> int:
     num_set = set(arr)
     count = 0
 

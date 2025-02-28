@@ -16,7 +16,6 @@
 # - Then perform a BFS starting at target, and return all the nodes
 #   that are in queue after k steps
 
-from typing import List
 from collections import deque
 
 class TreeNode:
@@ -25,7 +24,7 @@ class TreeNode:
         self.left = left
         self.right = right
 
-def distance_k_nodes_impure(root: TreeNode, target: TreeNode, k: int) -> List[int]:
+def distance_k_nodes_impure(root: TreeNode, target: TreeNode, k: int) -> list[int]:
     def dfs(node, parent):
         """Add a parent pointer for each node"""
         if not node:

@@ -19,10 +19,7 @@
 # - Find the in-degree of all nodes
 # - Add the ones with in-degree of 0 to the result set
 
-from typing import List
-
-
-def find_smallest_set_of_vertices(n: int, edges: List[List[int]]) -> List[int]:
+def find_smallest_set_of_vertices(n: int, edges: list[list[int]]) -> list[int]:
     # initialize the in-degrees of all nodes
     indegree = [0] * n
 

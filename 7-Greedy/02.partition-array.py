@@ -16,9 +16,7 @@
 #   Correct order doesn't matter, because we only need to count the number of subsequences.
 #   -> We can sort the array for easier grouping
 
-from typing import List
-
-def partition_array(nums: List[int], k: int) -> int:
+def partition_array(nums: list[int], k: int) -> int:
     # sort nums in ascending order
     nums.sort()
 

@@ -32,10 +32,7 @@
 # Could you implement a solution using only
 # O(1) extra space complexity and O(n) runtime complexity?
 
-from typing import List
-
-
-def missing_number(nums: List[int]) -> int:
+def missing_number(nums: list[int]) -> int:
     n = len(nums)
     num_set = set(nums)
 
@@ -57,7 +54,7 @@ def missing_number(nums: List[int]) -> int:
 #   0 + 1 + 2 + ... + n = n * (n + 1) / 2
 
 
-def missing_number_v2(nums: List[int]) -> int:
+def missing_number_v2(nums: list[int]) -> int:
     n = len(nums)
     return (n * (n + 1)) // 2 - sum(nums)
 

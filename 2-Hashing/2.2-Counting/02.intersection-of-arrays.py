@@ -8,10 +8,7 @@
 # - each array contains distinct elements
 #   -> appears in all arrays <=> appears n times
 
-from typing import List
-
-
-def intersection(nums: List[List[int]]) -> List[int]:
+def intersection(nums: list[list[int]]) -> list[int]:
     counts = {}
 
     for arr in nums:

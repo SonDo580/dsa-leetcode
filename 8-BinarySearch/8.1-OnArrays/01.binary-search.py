@@ -3,10 +3,7 @@
 # If target exists in nums, return its index.
 # Otherwise, return -1.
 
-from typing import List
-
-
-def binary_search(nums: List[int], target: int) -> int:
+def binary_search(nums: list[int], target: int) -> int:
     left = 0
     right = len(nums) - 1
 

@@ -19,10 +19,7 @@
 # 1 <= k <= n <= 10^5
 # -10^4 <= nums[i] <= 10^4
 
-from typing import List
-
-
-def subarray_max_average(nums: List[int], k: int) -> float:
+def subarray_max_average(nums: list[int], k: int) -> float:
     current_sum = 0
     for i in range(k):
         current_sum += nums[i]

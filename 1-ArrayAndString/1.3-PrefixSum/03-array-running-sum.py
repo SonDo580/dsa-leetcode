@@ -21,9 +21,7 @@
 # 1 <= nums.length <= 1000
 # -10^6 <= nums[i] <= 10^6
 
-from typing import List
-
-def running_sum(nums: List[int]) -> List[int]:  
+def running_sum(nums: list[int]) -> list[int]:  
     result = [nums[0]]
     for i in range(1, len(nums)):
         result.append(result[-1] + nums[i])

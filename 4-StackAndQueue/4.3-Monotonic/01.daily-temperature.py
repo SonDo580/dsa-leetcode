@@ -18,12 +18,9 @@
 
 # Note: the stack is monotonically non-increasing
 
-from typing import List
-
-
-def daily_temperature(temperatures: List[int]) -> List[int]:
+def daily_temperature(temperatures: list[int]) -> list[int]:
     # Use a stack to store the day indices
-    stack: List[int] = []
+    stack: list[int] = []
 
     # Initialize the answers:
     # answers[i] = 0 if there's no future that is warmer

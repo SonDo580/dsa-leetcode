@@ -2,9 +2,7 @@
 # return indices of two numbers such that they add up to target. 
 # You cannot use the same index twice.
 
-from typing import List
-
-def two_sum(nums: List[int], target: int) -> List[int]:
+def two_sum(nums: list[int], target: int) -> list[int]:
     complement_dict = {}
     
     for i in range(len(nums)):
