@@ -31,6 +31,13 @@
 # 0 <= cost[i] <= 999
 
 
+# ===== Identify DP problems =====
+# 1. Asking for the optimal value (max, min) or number of ways to do something
+# (not all problems in this format are DP problems)
+# 
+# 2. Need to make a decision at each step that affects future decisions 
+
+
 # ===== Framework =====
 # 1. A function or data structure that compute/contain the answer
 #    to the problem for any given state
