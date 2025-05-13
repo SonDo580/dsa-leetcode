@@ -15,3 +15,8 @@
 - Iterate over the input to push every element onto the heap.
 - When the heap size exceed k, pop the "worst" element from it.
 - At the end, the k "best" elements remain in the heap.
+
+## Note on heapq implementation:
+- If the items in the heap are tuples, it uses the first entries for comparison. 
+- If the first entries are equal, it compares the second entries. 
+- And so on.
