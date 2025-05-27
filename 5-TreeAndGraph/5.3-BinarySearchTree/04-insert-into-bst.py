@@ -25,21 +25,60 @@
 # -10^8 <= val <= 10^8
 # It's guaranteed that val does not exist in the original BST.
 
+from typing import Optional
+
 
 class TreeNode:
     def __init__(
-        self, val: int, left: "TreeNode" | None = None, right: "TreeNode" | None = None
+        self,
+        val: int,
+        left: Optional["TreeNode"] = None,
+        right: Optional["TreeNode"] = None,
     ):
         self.val = val
         self.left = left
         self.right = right
 
-def insert_into_bst(root: TreeNode | None, val: int) -> TreeNode:
+
+def insert_into_bst_recur(root: TreeNode | None, val: int) -> TreeNode:
     if not root:
         return TreeNode(val)
 
     if val < root.val:
-        root.left = insert_into_bst(root.left, val)
+        root.left = insert_into_bst_recur(root.left, val)
     elif val > root.val:
-        root.right = insert_into_bst(root.right, val)
+        root.right = insert_into_bst_recur(root.right, val)
     return root
+
+
+def insert_into_bst_iter(root: TreeNode | None, val: int) -> TreeNode:
+    if not root:
+        return TreeNode(val)
+
+    current = root
+    while current:
+        if val < current.val:
+            # insert into the left subtree
+            if not current.left:
+                current.left = TreeNode(val)
+                break
+            current = current.left
+        elif val > current.val:
+            # insert into the right subtree
+            if not current.right:
+                current.right = TreeNode(val)
+                break
+            current = current.right
+        else:
+            break  # val already exists
+
+    return root
+
+
+root = TreeNode(4)
+root.left = TreeNode(2)
+root.right = TreeNode(7)
+root.left.left = TreeNode(1)
+root.left.right = TreeNode(3)
+
+x = insert_into_bst_iter(root, 5)
