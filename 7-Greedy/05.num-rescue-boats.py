@@ -36,6 +36,42 @@
 # - This means y could pair with anyone, since x is already the heaviest person.
 # - To maximize "boats efficiency", we should pair y with the heaviest person, which is x.
 
+# ===== A more robust reasoning =====
+# - Consider case: x + y <= limit
+#   This means y can be paired with anyone, since x is heaviest.
+# - Let z denote 1 of the remaining people.
+#       R denote the set of remaining people without z.
+# - Then Total_boat = R_boat U z_boat U x_boat U y_boat
+#   (I'm using U to indicate that the boats may overlap)
+# - y (lightest person) sits in 1 board. We have to decide whether y
+#   should sit alone, pair with x, or pair with z.
+
+# Consider 3 cases:
+# + Let y sits alone:
+#   Total_boat = (R_boat U z_boat U x_boat) + y_boat
+#              = (R_boat U z_boat U x_boat) + 1
+#             >= (R_boat U z_boat U x_boat) U y_boat
+# => This can only increase the number of boats needed
+
+# + Pair y with z:
+#   Total_boat = R_boat U x_boat + z_boat
+#              =  R_boat U x_boat + 1
+
+# + Pair y with x:
+#   Total_boat = R_boat U z_boat + x_boat
+#              =  R_boat U z_boat + 1
+
+# - Let's compare R_boat U x_boat and R_boat U z_boat
+# + If we cannot merge z_boat into R_boat,
+#   we also cannot merge x_boat into R_boat, since x is heavier than z
+#   -> R_boat U x_boat = R_boat U z_boat = R_boat + 1
+# + If we can merge z_boat into R_boat,
+#   we may or may not be able to merge x_boat into R_boat
+#   -> R_boat U x_boat >= R_boat U z_boat
+# => In general: R_boat U x_boat >= R_boat U z_boat
+
+# => We should always pair y with x
+
 # ===== Implementation =====
 # - To keep track of the lightest and heaviest person at any time,
 #   sort the input and use 2 pointers from both ends.
@@ -67,5 +103,6 @@ def num_rescue_boats(people: list[int], limit: int) -> int:
 # - Iterate through 'people' with 2 pointers: O(n)
 # => Overall: O(n*log(n))
 #
-# 2. Space complexity: O(1)
-# (not including space for the sort)
+# 2. Space complexity: depends on the sort function
+# - built-in sort method of Python (timsort): O(n)
+
