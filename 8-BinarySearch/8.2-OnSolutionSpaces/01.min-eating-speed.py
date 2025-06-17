@@ -73,7 +73,7 @@ def min_eating_speed(piles: list[int], h: int) -> int:
 
 
 # ===== Complexity =====
-# Let n = piles.length; m = max(piles)
+# Let n = piles.length; k = max(piles)
 #
 # 1. Time complexity
 # - check runs in O(n)
