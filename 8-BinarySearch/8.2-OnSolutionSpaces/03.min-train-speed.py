@@ -51,6 +51,7 @@
 # - Let k the speed of (all) the trains.
 #   If a train has distance d then the time is d / k.
 #   The trains only depart at integer hour, so we need to round the time up.
+#   The last ride doesn't need rounding because we don't need to wait for another train.
 #
 # - We can perform a binary search for the speed k.
 #   + lower bound: 1 (k must be a positive integer)
@@ -59,20 +60,20 @@
 #
 # - Since each train ride takes at least 1 hour, if there more trains than hours allowed,
 #   it is impossible to find an answer.
+#   But the last train can take fractional time (no more waiting),
+#   so we should compare number of trains with hours rounded up.
 
 import math
 
 
 def min_train_speed(dist: list[int], hour: float) -> int:
-    # We cannot be on time since each train ride takes at least 1 hour
-    if len(dist) > hour:
+    if len(dist) > math.ceil(hour):
         return -1
 
     def _check(speed: int):
         time = 0
 
         for distance in dist:
-            # Round up the time since the previous ride (the last ride is not rounded up)
             time = math.ceil(time)
             time += distance / speed
 
