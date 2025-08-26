@@ -51,11 +51,12 @@ class TreeNode:
 #   -> perform DFS to explore all paths
 # - Set initial min and max value as the root value.
 # - For each node, update the min and max value upto that point.
-# - Base case: when we reach a "None" node, the path is "finalized" 
+# - Base case: when we reach a "None" node, the path is "finalized"
 #   -> calculate the max ancestor difference for the whole path.
-# - Build up the final result in a "bottom-up" manner: 
+# - Build up the final result in a "bottom-up" manner:
 #   For each node, compare max ancestor difference of left and right,
 #   Take the larger one as max ancestor difference for a path that go through that node.
+
 
 def max_ancestor_diff_recur(root: TreeNode) -> int:
     def dfs(node: TreeNode | None, min_val: int, max_val: int) -> int:
@@ -75,3 +76,32 @@ def max_ancestor_diff_recur(root: TreeNode) -> int:
         return max(left_diff, right_diff)
 
     return dfs(root, root.val, root.val)
+
+
+# ===== Iterative approach =====
+# - The idea is the same
+# - Update max ancestor difference (for the whole tree) when reaching a "None" node,
+#   (instead of building "bottom-up")
+
+
+def max_ancestor_diff_iter(root: TreeNode) -> int:
+    max_diff = -1  # max ancestor difference of the whole tree
+
+    stack = [
+        (root, root.val, root.val)
+    ]  # current node, min and max value upto current node
+
+    while stack:
+        node, min_val, max_val = stack.pop()
+
+        if node is None:
+            max_diff = max(max_diff, max_val - min_val)
+            continue
+
+        next_min_val = min(node.val, min_val)
+        next_max_val = max(node.val, max_val)
+
+        stack.append((node.left, next_min_val, next_max_val))
+        stack.append((node.right, next_min_val, next_max_val))
+
+    return max_diff
