@@ -44,13 +44,13 @@ def range_sum_bst_iterative(root: TreeNode, low: int, high: int) -> int:
     while len(stack) > 0:
         node = stack.pop()
 
-        if low <= root.val <= high:
-            sum += root.val
+        if low <= node.val <= high:
+            sum += node.val
 
-        if node.left and node.left.val > low:
+        if node.left and node.val > low:
             stack.append(node.left)
 
-        if node.right and node.right.val < high:
+        if node.right and node.val < high:
             stack.append(node.right)
 
     return sum
