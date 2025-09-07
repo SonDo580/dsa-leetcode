@@ -6,12 +6,17 @@
 # Return the minimum number of swaps needed.
 
 # ===== Analyze =====
-# - this is a directed graph given as an array of edges
-# - if every city can reach city 0, all roads must be directed towards 0
+# - This is a directed graph given as an array of edges.
+# - The graph is a tree (see 5.0-notes/graph.md):
+#   + there are n nodes and n - 1 edges
+#   + there is only 1 path between 2 nodes
+# - If every city can reach city 0, all roads must be directed towards 0
+#   (0 is the root of the tree)
 
 # ===== Strategy =====
-# - start traversing from city 0, treat the graph as undirected
-# - every time we see an edge pointing away, swap it and increment the count
+# - Treat the graph as undirected, start traversing from city 0
+# - Every time we see an edge pointing away, swap it and increment the count
+#   (an edge is pointing away if it is present in 'connections' array)
 
 from collections import defaultdict
 
@@ -78,11 +83,12 @@ def min_reorder_iterative(connections: list[list[int]]) -> int:
 #
 # Time complexity:
 # - we visit each node once and do constant work -> O(n)
-# - we visit each edge twice (including the virtual edges) -> O(2(n-1)) = O(n)
+# - we visit each edge twice -> O(2(n-1)) = O(n)
 # => Overall: O(n)
 #
 # Space complexity:
 # - seen: O(n)
 # - roads: O(n-1) = O(n)
 # - graph: O(n)
+# - recursion stack / stack: O(n)
 # => Overall: O(n)
