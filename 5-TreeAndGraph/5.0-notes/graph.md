@@ -111,3 +111,17 @@ def build_adjacency_list(adjacency_matrix):
   - Acyclic: there are no cycles
 - Note: ignore edge directions when deciding whether a graph is a tree.
 - Property: for a graph with n nodes, if it is connected and has exactly n - 1 edges, it is guaranteed to be a tree
+
+# When to use DFS/BFS
+
+- There are some problems where using BFS is clearly better than using DFS
+  - tree: when we concern with tree levels
+  - graph: find the shortest path
+
+# Implicit graph
+
+- If a problem involves transitioning between states:
+  - states can be nodes.
+  - transition criteria can be edges.
+- If a problem wants the shortest path or fewest operations etc.,
+  it can be a candidate for BFS.
