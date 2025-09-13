@@ -1,5 +1,5 @@
 # You are climbing a staircase. It takes n steps to reach the top.
-# Each time you can either climb 1 or 2 steps. 
+# Each time you can either climb 1 or 2 steps.
 # In how many distinct ways can you climb to the top?
 
 # Example 1:
@@ -28,13 +28,13 @@
 # ===== Analyze =====
 # - 1 state variable: index i
 #   dp(i): return number of ways to climb to step i
-# 
+#
 # - dp(i) = dp(i - 1) + dp(i - 2)
 # + last move take 1 step -> number of ways to reach n is the same as n - 1
 # + last move take 2 steps -> number of ways to reach n is the same as n - 2
 # + note that we're counting number of ways (not number of steps)
-# 
-# - bases cases: 
+#
+# - bases cases:
 # + dp(0) = 1 (already at the top)
 # + dp(1) = 1 (can only take 1 step)
 
@@ -55,10 +55,18 @@ def ways_to_climb_stairs(n: int) -> int:
     return dp(n)
 
 
+# ===== Complexity =====
+# 1. Time complexity: O(n)
+# - Each state is computed at most once, since results are memoized.
+# - Each computation takes O(1)
+#
+# 2. Space complexity: O(n) - for 'memo' dictionary and recursion stack
+
+
 # ===== Bottom-up =====
 def ways_to_climb_stairs(n: int) -> int:
     if n == 1:
-        return 1 
+        return 1
 
     prev2 = prev1 = 1
 
@@ -66,3 +74,8 @@ def ways_to_climb_stairs(n: int) -> int:
         prev2, prev1 = prev1, prev1 + prev2
 
     return prev1
+
+
+# ===== Complexity =====
+# 1. Time complexity: O(n)
+# 2. Space complexity: O(1)
