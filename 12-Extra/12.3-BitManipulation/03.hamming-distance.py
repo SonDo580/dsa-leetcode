@@ -30,7 +30,7 @@
 
 def hamming_distance(x: int, y: int) -> int:
     xor = x ^ y
-    count = 0 
+    count = 0
 
     while xor > 0:
         count += xor & 1
@@ -41,4 +41,28 @@ def hamming_distance(x: int, y: int) -> int:
 
 # ===== Complexity =====
 # 1. Time complexity: O(1)
+# 2. Space complexity: O(1)
+
+
+# ===== Brian Kernighan trick =====
+# - For any integer n: n & (n - 1) removes the lowest set bit from n
+#   (for the proof see 12.3/note)
+# - Apply to Hamming Distance:
+#   + Use the formula to repeatedly drop the lowest set bit from xor.
+#   + Stop when xor becomes 0
+
+
+def hamming_distance(x: int, y: int) -> int:
+    xor = x ^ y
+    count = 0
+
+    while xor > 0:
+        xor &= xor - 1
+        count += 1
+
+    return count
+
+
+# ===== Complexity =====
+# 1. Time complexity: still O(1), but faster if there are not many bit differences.
 # 2. Space complexity: O(1)
