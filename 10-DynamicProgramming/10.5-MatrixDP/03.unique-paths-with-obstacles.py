@@ -108,3 +108,38 @@ def unique_paths_with_obstacles(obstacle_grid: list[list[int]]) -> int:
                 dp[row][col] += dp[row][col - 1]
 
     return dp[m - 1][n - 1]
+
+# ===== Bottom-up (space-optimized) =====
+# - The recurrence relation is static: number of ways to reach a cell always
+#   depends only on number of ways to reach its left and top cells.
+#   -> We only need to track the last 2 rows.
+#   -> dp will be a 1D array to store results for each column of the current row.
+def unique_paths_with_obstacles(obstacle_grid: list[list[int]]) -> int:
+    if obstacle_grid[0][0] == 1:
+        return 0
+    
+    m = len(obstacle_grid)
+    n = len(obstacle_grid[0])
+    
+    last_dp: list[int] = [] # won't be used for the first row
+    
+    for row in range(m):
+        current_dp = [0] * n
+        
+        for col in range(n):
+            if obstacle_grid[row][col] == 1:
+                current_dp[col] = 0
+                continue
+            
+            if row + col == 0:
+                current_dp[col] = 1
+                continue
+                
+            if row > 0:
+                current_dp[col] += last_dp[col]
+            if col > 0:
+                current_dp[col] += current_dp[col - 1]
+                
+        last_dp = current_dp
+            
+    return last_dp[n - 1]
