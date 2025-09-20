@@ -18,9 +18,9 @@
 # 1 <= k <= n
 
 
-# ===== Analyze =====
+# ===== Analysis =====
 # - Let n = nums.length
-# - Number of combinations: nCk = n! / k!(n - k)!
+# - Number of combinations with k elements: nCk = n! / k!(n - k)!
 # - Base case:
 #   + nCn = 1 (1 item - the list with all numbers in range)
 #   + nC1 = n (each item is a list containing 1 number in the range)
@@ -31,33 +31,62 @@
 #   + n - k + 1 options for the last slot
 
 
-# ===== Recursive divide-and-conquer =====
-# (*) Note:
-# - When performing the recursive call, only includes the ones that come after current number.
-# - Allowing numbers before current number will generate duplicated combinations.
-#   (because order doesn't matter in combination)
-def combine(n: int, k: int) -> list[list[int]]:
+# ===== Strategy =====
+# - Use a recursive function recur(start, end, k) to generate combination.
+# - Base cases:
+#   . k = n -> result contains a list of all numbers (nCn = 1)
+#   . k = 1 -> result contains n single-element lists (nC1 = n)
+# - For the general case, loop through each number:
+#   + Find all combinations with k - 1 elements from the remaining numbers.
+#     Only includes the ones that come after current number to avoid duplicates,
+#     since order doesn't matter in combination.
+#   + Prepend the current number of to each combination generated
+#     from the remaining numbers, then add to result.
+def get_combinations(n: int, k: int) -> list[list[int]]:
     def recur(start: int, end: int, k: int) -> list[list[int]]:
         """Return all combinations of k numbers chosen from [start, end]"""
         full_range = range(start, end + 1)
 
-        # k == end -> return full range
         if k == end:
             return [list(full_range)]
 
-        # k == 1 -> return single-element lists
         if k == 1:
             return [[i] for i in full_range]
 
-        result: list[list[int]] = []
+        all_combinations: list[list[int]] = []
         for i in full_range:
-            # Find all combinations of k - 1 numbers from remaining numbers
             remaining_combinations = recur(i + 1, end, k - 1)
-
-            # Combine current number with each combination
             for combination in remaining_combinations:
-                result.append([i] + combination)
+                all_combinations.append([i] + combination)
 
-        return result
+        return all_combinations
 
     return recur(1, n, k)
+
+
+# ===== Approach 2 =====
+# - Build each combination using a recursive function backtrack(current, i),
+#   where 'current' is the combination being built,
+#   i is the index that represents where we should start iterating.
+# - We need i to avoid duplicates. Because order doesn't matter in a combination,
+#   only combine current element and elements that come after it.
+# - When 'current' reaches length k, add it to result.
+
+
+def get_combinations(n: int, k: int) -> list[list[int]]:
+    all_combinations: list[list[int]] = []
+
+    def backtrack(current: list[int], i: int):
+        if len(current) == k:
+            # - We mutate 'current' across 'backtrack' calls,
+            #   -> create a copy of 'current' when adding
+            all_combinations.append(current[:])
+            return
+
+        for num in range(i, n + 1):
+            current.append(num)
+            backtrack(current, num + 1)
+            current.pop()
+
+    backtrack([], 1)
+    return all_combinations
