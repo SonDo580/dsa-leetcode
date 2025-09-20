@@ -1,6 +1,6 @@
 # Given an integer array nums of unique elements,
 # return all possible subsets (the power set).
-
+#
 # The solution set must not contain duplicate subsets.
 # Return the solution in any order.
 
@@ -18,26 +18,57 @@
 # All the numbers of nums are unique.
 
 
-# ===== Analyze =====
+# ===== Analysis =====
 # - Let n = nums.length
-# - The problem is asking for the combinations of nums
+# - The problem is asking for all the combinations of nums
 #   -> there are 2^n combinations
 # - The number of elements in each combination is from 0 to n
 
-
-# ===== Recursive divide-and-conquer =====
+# ===== Strategy =====
 # - Add the empty set
 # - Loop through each item:
 #   + build the combinations that starts with current item
 #     by prepending it to each combination of remaining items.
 #   + because order doesn't matter in a combination,
 #     only combine current element and elements that come after it.
-def subsets(nums: list[int]) -> list[list[int]]:
-    result: list[list[int]] = [[]]
+
+
+def get_subsets(nums: list[int]) -> list[list[int]]:
+    all_subsets: list[list[int]] = [[]]
 
     for i in range(len(nums)):
-        remaining_combinations = subsets(nums[(i + 1) :])
-        for combination in remaining_combinations:
-            result.append([nums[i]] + combination)
+        remaining_subsets = get_subsets(nums[(i + 1) :])
+        for subset in remaining_subsets:
+            all_subsets.append([nums[i]] + subset)
 
-    return result
+    return all_subsets
+
+
+# ===== Approach 2 =====
+# - Build each subset using a recursive function backtrack(current, i),
+#   where 'current' is the subset being built,
+#   i is the index that represents where we should start iterating.
+# - We need i to avoid duplicates. Because order doesn't matter in a subset,
+#   only combine current element and elements that come after it.
+# - Since the subsets can have any length, every "node" is an answer
+#   (including the root []).
+
+
+def get_subsets(nums: list[int]) -> list[list[int]]:
+    all_subsets: list[list[int]] = []
+
+    def backtrack(current: list[int], i: int):
+        # - We mutate 'current' across 'backtrack' calls,
+        #   -> create a copy of 'current' when adding
+        all_subsets.append(current[:])
+
+        if i == len(nums):
+            return
+
+        for j in range(i, len(nums)):
+            current.append(nums[j])
+            backtrack(current, j + 1)
+            current.pop()
+
+    backtrack([], 0)
+    return all_subsets
