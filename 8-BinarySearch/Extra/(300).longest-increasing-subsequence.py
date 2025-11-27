@@ -82,3 +82,47 @@ Complexity:
 
 2. Space complexity: O(n) for 'tails'
 """
+
+
+# ===== Extra: Find 1 specific LIS =====
+# ======================================
+"""
+- We can modify the algorithm to reconstruct 1 LIS
+- Let's maintain:
+  + 'tails': stores smallest tail for subsequence lengths (same as before).
+  + 'tail_indices': stores index in 'nums' for each value in 'tails'.
+  + 'previous': previous[i] = index of the previous element in the LIS ending at nums[i].
+
+- When nums[i] updates tails[k], the predecessor of nums[i] is at tail_indices[k - 1]
+  -> set previous[i] = tail_indices[k - 1]
+
+- At the end, the LIS ends with tail_indices[-1].
+  Follow 'previous' backwards to reconstruct the LIS.
+"""
+
+
+def LIS(nums: list[int]) -> int:
+    tails: list[int] = []
+    tail_indices: list[int] = []
+    previous = [-1] * len(nums)
+
+    for i, num in enumerate(nums):
+        if len(tails) == 0 or tails[-1] < num:
+            tails.append(num)
+            tail_indices.append(i)
+            if len(tails) > 1:
+                previous[i] = tail_indices[-2]
+        else:
+            idx = bisect.bisect_left(tails, num)
+            tails[idx] = num
+            tail_indices[idx] = i
+            previous[i] = tail_indices[idx - 1]
+
+    # reconstruct the LIS
+    reversed_lis: list[int] = []
+    k = tail_indices[-1]  # index of last element in LIS
+    while k != -1:
+        reversed_lis.append(nums[k])
+        k = previous[k]  # trace backwards
+
+    return list(reversed(reversed_lis))
