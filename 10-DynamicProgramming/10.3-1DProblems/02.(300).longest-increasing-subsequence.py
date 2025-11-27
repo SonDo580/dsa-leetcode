@@ -101,3 +101,58 @@ def length_of_LIS(nums: list[int]) -> int:
 
 # ===== Approach 2: Binary search =====
 # (see BinarySearch section)
+
+
+# ===== Extra: Find 1 specific LIS =====
+# ======================================
+"""
+- We can modify the algorithm to reconstruct 1 LIS
+- Let's use:
+  + 'dp': dp[i] = the length of 1 LIS that ends with nums[i]
+  + 'prev': prev[i] = index of the previous element in 1 LIS ending at nums[i].
+                      (or -1 if nums[i] starts a subsequence)
+- Update both 'dp' and 'prev' at each step.
+- At the end, reconstruct 1 LIS:
+  + Find the ending index of the LIS.
+  + Walk 'prev' backwards.               
+"""
+
+
+def LIS(nums: list[int]) -> int:
+    n = len(nums)
+    dp: list[int] = [1] * n
+    prev: list[int] = [-1] * n
+
+    for i in range(n):
+        for j in range(i):
+            if nums[j] < nums[i] and dp[j] + 1 > dp[i]:
+                dp[i] = dp[j] + 1
+                prev[i] = j
+
+    # Find the ending index of the LIS
+    lis_len = max(dp)
+    k = dp.index(lis_len)
+
+    # Reconstruct the LIS
+    reversed_lis: list[int] = []
+    while k != -1:
+        reversed_lis.append(nums[k])
+        k = prev[k]  # trace backwards
+
+    return list(reversed(reversed_lis))
+
+
+"""
+Complexity:
+
+1. Time complexity:
+- Build 'dp' and 'prev': O(n^2)
+- Find ending index of LIS: O(n)
+- Recover LIS (trace then reverse): O(n)
+=> Overall: O(n^2)
+
+2. Space complexity:
+- 'dp': O(n)
+- 'prev': O(n)
+=> Overall: O(n)
+"""
