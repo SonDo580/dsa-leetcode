@@ -91,38 +91,68 @@ Complexity:
 - Let's maintain:
   + 'tails': stores smallest tail for subsequence lengths (same as before).
   + 'tail_indices': stores index in 'nums' for each value in 'tails'.
-  + 'previous': previous[i] = index of the previous element in the LIS ending at nums[i].
+  + 'prev': prev[i] = index of the previous element in 1 LIS ending at nums[i].
+                      (or -1 if nums[i] starts a subsequence)
 
 - When nums[i] updates tails[k], the predecessor of nums[i] is at tail_indices[k - 1]
-  -> set previous[i] = tail_indices[k - 1]
+  -> set prev[i] = tail_indices[k - 1]
 
 - At the end, the LIS ends with tail_indices[-1].
   Follow 'previous' backwards to reconstruct the LIS.
 """
 
 
-def LIS(nums: list[int]) -> int:
+def LIS(nums: list[int]) -> list[int]:
     tails: list[int] = []
     tail_indices: list[int] = []
-    previous = [-1] * len(nums)
+    prev: list[int] = [-1] * len(nums)
 
     for i, num in enumerate(nums):
         if len(tails) == 0 or tails[-1] < num:
             tails.append(num)
             tail_indices.append(i)
             if len(tails) > 1:
-                previous[i] = tail_indices[-2]
+                prev[i] = tail_indices[-2]
         else:
             idx = bisect.bisect_left(tails, num)
             tails[idx] = num
             tail_indices[idx] = i
-            previous[i] = tail_indices[idx - 1]
+            prev[i] = tail_indices[idx - 1]
 
     # reconstruct the LIS
     reversed_lis: list[int] = []
     k = tail_indices[-1]  # index of last element in LIS
     while k != -1:
         reversed_lis.append(nums[k])
-        k = previous[k]  # trace backwards
+        k = prev[k]  # trace backwards
 
     return list(reversed(reversed_lis))
+
+
+"""
+Complexity:
+
+1. Time complexity:
+- Iterate through 'nums', bisect_left in each iteration: O(n * log(n))
+- Recover 1 LIS (trace then reverse): O(n)
+=> Overall: O(n * log(n))
+
+2. Space complexity:
+- 'tails': O(n)
+- 'tail_indices': O(n)
+- 'previous': O(n)
+=> Overall: O(n)
+"""
+
+
+# ===== Extra: Find all LISs =====
+# ================================
+"""
+- O(n * log(n)) binary-search can not be used,
+  since it discards branches (alternate candidates) to compress the search space.
+  Once those paths are lost, we cannot recover all LISs.
+  . 'tails' only stores smallest tail for subsequence lengths.
+  . each entry in 'prev' only points to a single predecessor.
+
+-> Use O(n^2) DP (see DynamicProgramming section).
+"""
