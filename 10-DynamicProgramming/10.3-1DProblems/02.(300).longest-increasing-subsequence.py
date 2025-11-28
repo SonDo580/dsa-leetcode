@@ -80,7 +80,7 @@ def length_of_LIS(nums: list[int]) -> int:
         max_len = 1
         for j in range(i):
             if nums[i] > nums[j]:
-                max_len = max(max_len, dp(j))
+                max_len = max(max_len, dp(j) + 1)
 
         memo[i] = max_len
         return max_len
@@ -118,7 +118,7 @@ def length_of_LIS(nums: list[int]) -> int:
 """
 
 
-def LIS(nums: list[int]) -> int:
+def LIS(nums: list[int]) -> list[int]:
     n = len(nums)
     dp: list[int] = [1] * n
     prev: list[int] = [-1] * n
@@ -156,3 +156,110 @@ Complexity:
 - 'prev': O(n)
 => Overall: O(n)
 """
+
+
+# ===== Extra: Find all LISs =====
+# ================================
+"""
+- To recover all LISs, modify the find_one algorithm.
+- Let prev[i] store the list of predecessor indices in all LISs ending at nums[i].
+- After computing 'dp' and 'prev', find all indices where dp[i] = length of LIS.
+  Each is a valid ending point.
+- Perform DFS/backtracking from those points through 'prev' to enumerate all LISs.
+"""
+
+
+def all_LISs(nums: list[int]) -> list[list[int]]:
+    n = len(nums)
+    dp: list[int] = [1] * n
+    prev: list[list[int]] = [[] for _ in range(n)]
+
+    for i in range(n):
+        for j in range(i):
+            if nums[j] >= nums[i]:
+                continue
+
+            # found a longer subsequence
+            if dp[j] + 1 > dp[i]:
+                dp[i] = dp[j] + 1
+                prev[i] = [j]  # reset predecessor list
+
+            # found another subsequence with current max length
+            elif dp[j] + 1 == dp[i]:
+                prev[i].append(j)  # add another predecessor
+
+    # Find the ending indices of all LISs
+    lis_len = max(dp)
+    end_indices = [i for i in range(n) if dp[i] == lis_len]
+
+    # Collect and return all LISs
+    return _collect_LISs_recur(nums, prev, end_indices)
+    # return _collect_LISs_iter(nums, prev, end_indices)
+
+"""
+Complexity: TODO
+"""
+
+
+def _collect_LISs_recur(
+    nums: list[int], prev: list[list[int]], end_indices: list[int]
+) -> list[list[int]]:
+    lis_list: list[list[int]] = []
+    reversed_path: list[int] = []  # shared and mutable
+
+    def dfs(i: int) -> None:
+        reversed_path.append(nums[i])
+
+        if len(prev[i]) == 0:
+            # Found 1 complete LIS
+            lis_list.append(list(reversed(reversed_path)))
+        else:
+            # Explore all predecessors
+            for p in prev[i]:
+                dfs(p)
+
+        reversed_path.pop()  # backtrack
+
+    # Start DFS from each LIS ending index
+    for i in end_indices:
+        dfs(i)
+
+    return lis_list
+
+
+def _collect_LISs_iter(nums: list[int], prev: list[list[int]], end_indices: list[int]):
+    lis_list: list[list[int]] = []
+    reversed_path: list[int] = []  # shared and mutable
+
+    # Stack item: (i, j)
+    # . i: index in 'nums'
+    # . j: next predecessor to explore (index in prev[i])
+    stack: list[tuple[int, int]] = [(i, 0) for i in end_indices]
+
+    while len(stack) > 0:
+        i, j = stack.pop()
+
+        # First encounter of nums[i] (haven't explored predecessors)
+        # -> add it to path
+        if j == 0:
+            reversed_path.append(nums[i])
+
+        # Found 1 complete LIS -> record and backtrack
+        if len(prev[i]) == 0:
+            lis_list.append(list(reversed(reversed_path)))
+            reversed_path.pop()  # pop nums[i]
+            continue
+
+        # All predecessors explored -> backtrack
+        if j == len(prev[i]):
+            reversed_path.pop()  # pop nums[i]
+            continue
+
+        # Push state to explore the next predecessor later
+        stack.append((i, j + 1))
+
+        # Push state to explore current predecessor in the next iteration
+        p = prev[i][j]
+        stack.append((p, 0))
+
+    return lis_list
