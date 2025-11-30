@@ -37,8 +37,8 @@ Analysis:
   -> Let's use a list 'tails' where tails[L] is the smallest tail 
      for any subsequence of length L + 1.
 
-- A subsequence with length L + 1 must end with a value strictly 
-  larger than the tail of a subsequence with length L.
+- The smallest tail of longer subsequences must be strictly 
+  greater than the smallest tail of shorter subsequences.
   -> 'tails' is strictly increasing (tails[0] < tails[1] < ...)
 
 - For a new element 'x':
