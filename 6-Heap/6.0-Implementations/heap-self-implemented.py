@@ -1,4 +1,14 @@
-# Note: children of node i have indices 2i + 1 and 2i + 2
+"""
+Implement a min heap (max heap is similar).
+
+Properties:
+- a node at i has left child at 2i + 1 and right child at 2i + 2.
+- a node at i has parent at (i - 1) // 2
+- all nodes from n // 2 to n - 1 are leaves.
+- in min heap:
+  . the min item is at index 0 (root)
+  . parent <= its children.
+"""
 
 
 class MinHeap:
@@ -7,88 +17,87 @@ class MinHeap:
         self.__heapify()
 
     def __heapify(self) -> None:
-        """Convert the cloned list to a heap in O(n)"""
+        """Convert the cloned list to a heap in O(n)."""
+        # - Move backwards to heapify lower subtrees first,
+        #   so when we sift down a higher node,
+        #   it interacts with already heapified subtree.
+        # - We only need to sift down the internal nodes.
+        #   Exclude the leaves.
         for i in range(len(self._heap) // 2 - 1, -1, -1):
-            self.__move_down(i)
-    
-        # Explain:
-        # - Why moving backwards:
-        #   + to heapify lower level subtrees first
-        #   + so when we move down a higher level node, it interacts with already heapified subtree
-        # - Why start from n // 2 - 1:
-        #   + in binary heap, nodes at indices n // 2 and beyond are all leaf nodes.
-        #   + we only need to move down the internal nodes
+            self.__sift_down(i)
 
-    def __move_up(self, index: int) -> None:
-        """Move a newly added item up the tree to its correct position"""
-        parent: int = (index - 1) // 2
-        while index > 0 and self._heap[parent] > self._heap[index]:
-            self._heap[parent], self._heap[index] = (
-                self._heap[index],
+    def __sift_up(self, i: int) -> None:
+        """
+        Move an item up the tree to its correct position.
+        Time complexity: 0(log(n)) (~ tree height)
+        """
+        parent: int = (i - 1) // 2
+        while i > 0 and self._heap[parent] > self._heap[i]:
+            self._heap[parent], self._heap[i] = (
+                self._heap[i],
                 self._heap[parent],
             )
-            index = parent
-            parent = (index - 1) // 2
+            i = parent
+            parent = (i - 1) // 2
 
-    def __move_down(self, index: int) -> None:
-        """Move an item down the tree to its correct position"""
+    def __sift_down(self, i: int) -> None:
+        """
+        Move an item down the tree to its correct position.
+        Time complexity: 0(log(n)) (~ tree height)
+        """
         n: int = len(self._heap)
-        current: int = index
-        left: int = 2 * index + 1  # left child index
-        right: int = 2 * index + 2  # right child index
+        current: int = i
+        left_child: int = 2 * i + 1
+        right_child: int = 2 * i + 2
 
-        if left < n and self._heap[left] < self._heap[current]:
-            current = left
-        if right < n and self._heap[right] < self._heap[current]:
-            current = right
+        if left_child < n and self._heap[left_child] < self._heap[current]:
+            current = left_child
+        if right_child < n and self._heap[right_child] < self._heap[current]:
+            current = right_child
 
-        if current != index:
-            self._heap[index], self._heap[current] = (
+        if current != i:
+            self._heap[i], self._heap[current] = (
                 self._heap[current],
-                self._heap[index],
+                self._heap[i],
             )
-            self.__move_down(current)
+            self.__sift_down(current)
 
     def heappush(self, item: int) -> None:
-        """Add an item to the heap in O(log n)"""
+        """Add an item to the heap in O(log n)."""
         self._heap.append(item)
-        self.__move_up(len(self._heap) - 1)
+        self.__sift_up(len(self._heap) - 1)
 
-        # Explain:
         # - Appending new item keeps the tree complete in O(1)
         #   (now new item is the rightmost leaf at the last level)
-        # - Moving up fixes the heap property in O(log n)
-        #   (find correct position for the new item)
+        # - Sift up to fix the heap property in O(log n).
 
     def heappop(self) -> int:
-        """Remove and return the min item in O(log n)"""
+        """Remove and return the min item in O(log n)."""
         min_item: int = self.peek()
         last_item: int = self._heap.pop()  # this is min_item if length is 1
 
         if len(self._heap) > 0:
             self._heap[0] = last_item
-            self.__move_down(0)
+            self.__sift_down(0)
 
-            # Explain:
             # - Placing the last item at the root keeps the tree complete in O(1).
             #   (last item is the rightmost leaf at the last level)
-            # - Moving down fixes the heap property in O(log n).
-            #   (swap temporary root with the smallest item & find correct position for the temporary root)
+            # - Sift down to fix the heap property in O(log n).
 
         return min_item
 
     def peek(self) -> int:
-        """Return the min item in O(1)"""
+        """Return the min item in O(1)."""
         if not self._heap:
             raise IndexError("Heap is empty")
         return self._heap[0]
 
     def __len__(self) -> int:
-        """Return the number of items in the heap"""
+        """Return the number of items in the heap."""
         return len(self._heap)
 
     def __str__(self) -> str:
-        """String representation of the heap"""
+        """String representation of the heap."""
         return str(self._heap)
 
 
@@ -109,7 +118,7 @@ def main():
     print(f"popped: {heap.heappop()}")  # 1
 
     # The min heap property is kept
-    print(f"heap: {heap}") # [3, 4]
+    print(f"heap: {heap}")  # [3, 4]
 
     # Convert a list to a heap in O(n)
     heap2 = MinHeap([67, 341, 234, -67, 12, -976])
@@ -124,5 +133,31 @@ def main():
         print(heap2.heappop(), end=" ")  # -5352, -976, -67, 12, 67, 234, 341, 7451
     print()
 
+
 if __name__ == "__main__":
     main()
+
+
+"""
+Time complexity of 'heapify' in detailed:
+
+- At height = 0 (leaves):
+  . max cost of heapify: 0 
+  . max number of nodes: max n / 2
+- At height = 1:
+  . max cost of heapify: 1
+  . max number of nodes: n / 4
+- ...
+- At height = log2(n) (root):
+  . max cost of heapify: log2(n)
+  . max number of nodes: 1
+
+=> Total build cost: T = (n/2)*0 + (n/4)*1 + (n/8)*2 + ... + 1*log2(n)
+T <= n * ((1/4 + 2/8) + 3/16 + 4/32 + 5/64 + 6/128 + ...)
+   = n * (1/2 + 3/16 + 1/8 + 5/64 + 1/32 + ...)
+  <= n * (1/2 + 1/4 + 1/8 + 1/16 + ...)
+   = n * 1      (geometric series sum)
+   = n
+
+=> Time complexity: O(n)
+"""
