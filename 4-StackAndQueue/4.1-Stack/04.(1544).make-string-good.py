@@ -53,10 +53,10 @@ def make_string_good(s: str) -> str:
 
 """
 Complexity:
+- Let n = len(s)
 
 1. Time complexity:
-- iterate through s: n iterations
-- stack push/pop: O(1) (amortized)
+- iterate through s: O(n)
 - join remaining characters: O(n)
 => Overall: O(n)
 

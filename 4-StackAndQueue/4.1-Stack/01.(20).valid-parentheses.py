@@ -53,11 +53,8 @@ def is_valid_parens(s: str) -> bool:
 
 """
 Complexity:
+- Let n = len(s)
 
 1. Time complexity: O(n)
-- iterate through s: n iterations
-- stack push/pop: O(1) (amortized)
-=> Overall: O(n)
-
 2. Space complexity: O(n) for the stack
 """

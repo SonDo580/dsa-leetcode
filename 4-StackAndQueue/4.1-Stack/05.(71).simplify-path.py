@@ -117,12 +117,10 @@ def simplify_path(path: str) -> str:
 Complexity:
 
 1. Time complexity:
-- Loop through characters in path: n iterations
-- Stack push/pop: O(1) (amortized)
-  (although there's a nested while loop, 
-   we can only perform at most O(n) pops across iterations 
-   -> O(1) on average for each iteration.)
-- Combining characters from the stack: O(n)
+- Iterate through characters in path: O(n)
+  (Although there's a nested while loop,
+   we can only perform at most O(n) pops across iterations.)
+- Combine characters from the stack: O(n)
 => Overall: O(n)
 
 2. Space complexity: O(n) for the stack
@@ -162,8 +160,7 @@ Complexity:
 
 1. Time complexity:
 - Split the path into segments: O(n)
-- Iterate through the segments: n iterations
-- Stack push/pop: O(1) (amortized)
+- Iterate through segments: O(n)
 - Combine remaining segments: O(n)
 => Overall: O(n)
 
