@@ -1,23 +1,32 @@
-# Given an array of integers 'nums' and an integer 'limit',
-# return the size of the longest subarray such that the absolute difference
-# between any two elements of this subarray is less than or equal to limit.
+"""
+https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/
 
-# ===== Analysis =====
-# - We need to track subarray with a constraint
-#   -> sliding window
-# - When the subarray becomes invalid, keep shrinking from the left
-#   If the removed item is a maximum / minimum, we need to find the maximum / minimum again.
-#   -> use a monotonic data structure for efficient check
-# => use 2 double-ended queues to track the maximum / minimum item in the window
+Given an array of integers 'nums' and an integer 'limit',
+return the size of the longest subarray such that the absolute difference
+between any two elements of this subarray is less than or equal to 'limit'.
+"""
+
+"""
+Analysis:
+- We need to track subarray with a constraint.
+  -> use sliding window.
+- When the subarray becomes invalid, keep shrinking from the left.
+  If the removed item is a maximum / minimum, we need to find the maximum / minimum again.
+  -> use 2 monotonic double-ended queues to track the maximum / minimum item in the window.
+- We want the longest subarray possible.
+  -> the queues are non-increasing and non-decreasing 
+     (not strict, allow equal items).
+"""
+
 
 from collections import deque
 
 
 def longest_subarray(nums: list[int], limit: int) -> int:
-    # The first item is the minimum item of the current window
+    # increasing_queue[0] is the minimum item of the current window
     increasing_queue: deque[int] = deque()
 
-    # The first item is the maximum item of the current window
+    # decreasing_queue[0] is the maximum item of the current window
     decreasing_queue: deque[int] = deque()
 
     max_subarray_length = 0
@@ -52,10 +61,11 @@ def longest_subarray(nums: list[int], limit: int) -> int:
     return max_subarray_length
 
 
-# ===== Complexity =====
-#
-# Time complexity: O(n)
-# - each for loop iteration is amortized O(1)
-#
-# Space complexity: O(n)
-# - space for the queues
+"""
+Complexity:
+
+1. Time complexity: O(n)
+- each 'for' loop iteration is amortized O(1)
+
+2. Space complexity: O(n) for 2 queues
+"""
