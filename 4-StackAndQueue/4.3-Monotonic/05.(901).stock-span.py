@@ -21,7 +21,14 @@ int next(int price) Returns the span of the stock's price given that today's pri
 """
 
 """
-First attempt (failed):
+Brute-force: 
+- Initialize an array 'prices'.
+- On 'next' call, add price to 'prices'.
+  Go backwards while element <= price.
+  Return the difference in indices.
+-> Time complexity of 'next': always O(n).
+
+Next attempt (failed):
 - Use a monotonically decreasing stack and push price onto it.
 - Initialize each new price with a span of 1
 - Pop stack elements that are less than or equal to current price.
@@ -29,16 +36,21 @@ First attempt (failed):
 -> If the next price is greater than or equal to the current price,
    this will produce the wrong answer, since some elements 
    may have been popped off by current price.
+"""
 
-=> Strategy:
+
+# ========== Approach 1 ==========
+# ================================
+"""
 - Use a monotonically decreasing stack to store (prices & their spans).
 - For each new price:
   - Initialize each new price with a span of 1 (for itself)
-  - While the stack is not empty and the price at the top is less than or equal to the current price,
+  - While the price at the top of the stack <= current price,
     pop the top element and add its span to the current span.
   - Push the current price and its span onto the stack
   - Return the span of the current price
 """
+
 
 class StockSpanner:
     def __init__(self):
@@ -71,4 +83,92 @@ Complexity:
 
 2. Space complexity: O(n) for the stack
 (the stack can grow to n elements if the prices only decrease)
+"""
+
+
+# ========== Approach 2 ==========
+# ================================
+"""
+- Use a 'prices' array to track all prices.
+- Let the stack store indices (days) instead of (price, span) pairs.
+- After popping elements with price <= current_price
+  . If the stack is not empty -> span = current_day - top_of_stack
+  . Otherwise, all days in [0..current_day] is in span
+"""
+
+
+class StockSpanner:
+    def __init__(self):
+        self.prices: list[int] = []  # store all prices
+        self.stack: list[int] = []  # store indices (days)
+
+    def next(self, price: int) -> int:
+        self.prices.append(price)
+        current_day = len(self.prices) - 1
+
+        # Keep popping days with price <= current price
+        while self.stack and self.prices[self.stack[-1]] <= price:
+            self.stack.pop()
+
+        # Calculate the span
+        if self.stack:
+            # All days in [(top_of_stack + 1)..current_day]
+            span = current_day - self.stack[-1]
+        else:
+            # All days in [0..current_day]
+            span = current_day + 1
+
+        self.stack.append(current_day)
+        return span
+
+
+"""
+Complexity:
+
+1. Time complexity: (same as approach 1)
+
+2. Space complexity: O(n)
+- stack: O(n)
+- 'prices': O(n)
+"""
+
+
+# ========== Approach 3 ==========
+# ================================
+"""
+- Instead of using an array to store all prices, 
+  just track the current day.
+- Let the stack store (price, day) pairs.
+  price for comparison and day for span calculation.
+"""
+
+
+class StockSpanner:
+    def __init__(self):
+        self.stack: list[tuple[int]] = []  # store (price, day)
+        self.current_day: int = -1
+
+    def next(self, price: int) -> int:
+        self.current_day += 1
+
+        # Keep popping elements with price <= current price
+        while self.stack and self.stack[-1][0] <= price:
+            self.stack.pop()
+
+        # Calculate the span
+        if self.stack:
+            span = self.current_day - self.stack[-1][1]
+        else:
+            span = self.current_day + 1
+
+        self.stack.append((price, self.current_day))
+        return span
+
+
+"""
+Complexity:
+
+1. Time complexity: (same as approach 1)
+
+2. Space complexity: O(n) for the stack
 """
