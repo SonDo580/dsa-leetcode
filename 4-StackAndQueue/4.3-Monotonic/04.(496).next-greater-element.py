@@ -29,10 +29,15 @@ Brute-force approach: O(m * n^2) (m = nums1.length, n = nums2.length)
   they are less than current nums2[j'].
 - For each popped-off nums2[j], check if that number exists in nums1.
   If yes, find the index i in nums1.
-- Update answers[i] = nums2[j']. Don't update if it's already set, 
-  since we only want the first greater element.
+- Update answers[i] = nums2[j'].
 - We can build a dictionary that map value to index for nums1
   (enable fast checking).
+
+Constraint notes:
+- All numbers in nums1 are unique 
+  -> 1 value map to 1 index.
+- All numbers in nums2 are also unique
+  -> each result entry will be updated once.
 """
 
 
@@ -45,7 +50,7 @@ def next_greater_element(nums1: list[int], nums2: list[int]) -> list[int]:
     for i, num in enumerate(nums1):
         val_to_idx_1[num] = i
 
-    stack: list[int] = []
+    stack: list[int] = []  # store nums2's elements
 
     for current_num in nums2:
         # Keep popping element off the stack if they are less than current_num
@@ -82,3 +87,47 @@ Complexity:
 - stack: O(n) 
 => Overall: O(m + n)
 """
+
+
+# ========== Another approach ==========
+# ======================================
+# (same idea, same complexity)
+"""
+- Iterate in reversed order and push elements to a stack.
+- Before pushing, keep popping elements <= current.
+  Now the top of the stack is the first greater element for current
+  (if the stack is not empty).
+- Note: the stack is still monotonically decreasing.
+"""
+
+
+def next_greater_element(nums1: list[int], nums2: list[int]) -> list[int]:
+    # Initialize answers
+    answers: list[int] = [-1] * len(nums1)
+
+    # Build a dictionary to lookup the index of a value in nums1
+    val_to_idx_1: dict[int, int] = {}
+    for i, num in enumerate(nums1):
+        val_to_idx_1[num] = i
+
+    stack: list[int] = []  # store nums2's elements
+
+    # Iterate in reverse
+    for num in reversed(nums2):
+        # Keep popping element <= num
+        while len(stack) > 0 and stack[-1] < num:
+            stack.pop()
+
+        # Record answer if the stack is not empty
+        if stack:
+            # Check if num exists in nums1
+            if num in val_to_idx_1:
+                # Retrieve the index of num in nums1
+                i = val_to_idx_1[num]
+
+                # Set the next greater element for nums1[i]
+                answers[i] = stack[-1]
+
+        stack.append(num)
+
+    return answers
