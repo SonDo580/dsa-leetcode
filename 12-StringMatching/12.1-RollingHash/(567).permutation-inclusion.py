@@ -59,7 +59,7 @@ Complexity:
 
 1. Time complexity:
 - Get character frequencies for s1 and first window: O(m)
-- There are n - m windows, each iteration costs:
+- There are n - m + 1 windows, each iteration costs:
   . compare character frequencies: O(m)
   . update character frequencies for next window: O(1)
 => Overall: O(m + (n - m)*m) = O(m * (n - m))
@@ -116,7 +116,7 @@ Complexity:
 
 1. Time complexity:
 - Get character frequencies from s1, update for the first window: O(m)
-- There are n - m windows, each iteration costs:
+- There are n - m + 1 windows, each iteration costs:
   . check if all character frequencies become 0: O(m)
   . update character frequencies for next window: O(1)
 => Overall: O(m + (n - m)*m) = O(m * (n - m))
@@ -192,7 +192,7 @@ Complexity:
 
 1. Time complexity:
 - Get character frequencies / hash for s1 and first window: O(m)
-- There are n - m windows, each iteration costs:
+- There are n - m + 1 windows, each iteration costs:
   . compare hashes: O(1)
   . compare character frequencies: O(m)
     (if the hash function is good, this only happen once)

@@ -118,7 +118,7 @@ Complexity:
 
 1. Time complexity:
 - Compute hash for `needle` and first window: O(m)
-- There are n - m windows. Each iteration costs:
+- There are n - m + 1 windows. Each iteration costs:
   . Compare characters if hashes match: O(m).
     (If the hash function is "good", this only happens once)
   . Compute hash for next window: O(1)
