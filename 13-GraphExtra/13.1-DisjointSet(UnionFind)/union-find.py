@@ -296,3 +296,17 @@ class UnionFind:
 
 Extra: `alpha` is the Inverse Ackermann function, which grows very slowly.
 """
+
+
+# ===== Detect cycle =====
+# ========================
+"""
+- UnionFind can be used to detect cycle in undirected graph.
+- The graph has cycle if:
+  . find(x) and find(y) lead to the same root.
+  -> x and y are already in the same tree.
+  -> the "obvious" cycle: x -...- root -...- y
+                          |__________________|
+- Application: 
+  . used in Kruskal's algorithm for finding minimum spanning tree.
+"""
