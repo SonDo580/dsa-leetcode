@@ -103,7 +103,7 @@ Complexity:
 - Each point is connected to all other points.
   -> number of edges: E = N - 1 + N - 2 + ... + 1 = N * (N - 1) / 2
 
-1. Time complexity: O(E * log(E)) = O(N^2 * log(N))
+1. Time complexity: O(N^2 + E*log(E)) = O(N^2 * log(N))
 - Produce 'edges': O(N^2).
 - Sort 'edges': O(E*log(E)) = O(N^2 * log(N^2)) = O(N^2 * 2*log(N)) = O(N^2 * log(N))
 - Build minimum spanning tree: O(E) = O(N^2)
@@ -113,4 +113,71 @@ Complexity:
 2. Space complexity: O(N + E) = O(N^2)
 - 'edges': O(E) = O(N^2)
 - UnionFind: O(N) for 'ancestor' and 'height'
+"""
+
+# ===== Prim's algorithm =====
+# ============================
+from collections import defaultdict
+import heapq
+
+
+def min_cost_connect_points(points: list[tuple[int, int]]) -> int:
+    n = len(points)  # number of nodes
+
+    # Build the graph as adjacency list
+    # map node to list of (edge_weight, neighbor)
+    graph: defaultdict[int, list[tuple[int, int]]] = defaultdict(list)
+    for i in range(n - 1):
+        for j in range(i + 1, n):
+            d = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1])
+            graph[i].append((d, j))
+            graph[j].append((d, i))
+
+    in_mst: list[bool] = [False] * n
+    fringe_count = n
+    total_w = 0
+
+    # min heap storing (weight, vertex)
+    # for selecting next minimum weight edge in the cut-set
+    heap = []
+    
+    # Arbitrarily start from node 0
+    heapq.heappush(heap, (0, 0)) 
+
+    while heap:
+        w, u = heapq.heappop(heap)
+        if in_mst[u]:
+            continue
+
+        # Add edge (and node) to MST
+        in_mst[u] = True
+        total_w += w
+        fringe_count -= 1
+
+        if fringe_count == 0:
+            break
+
+        # Push adjacent edges to heap
+        for edge in graph[u]:
+            _, v = edge
+            if not in_mst[v]:
+                heapq.heappush(heap, edge)
+                
+    return total_w
+
+"""
+Complexity:
+
+1. Time complexity: O(N^2 + E*log(E)) = O(N^2 * log(N))
+- Build 'graph': O(N^2).
+- Init 'in_mst': O(N).
+- Build minimum spanning tree: O(E * log(E)) = O(N^2 * log(N))
+  . heappush / heappop: O(log(E)) = O(log(N^2)) = O(log(N))
+  . number of heappush and heappop: O(E) = O(N^2)
+    (each edge is pushed once and popped once)
+
+2. Space complexity: O(N + E) = O(N^2)
+- 'graph': O(E) = O(N^2)
+- 'in_mst': O(N)
+- heap: O(E) = O(N^2)
 """
