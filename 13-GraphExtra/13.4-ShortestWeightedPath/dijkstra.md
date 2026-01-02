@@ -45,7 +45,7 @@ while (min_heap is not empty):
 - Implementation notes: I chose to update distance after popping from heap. This is to handle source node. If we set d[source] = 0 before the `while` loop, the `du >= d[u]` will evaluate to True for the source, thus neighbors exploring is skipped.
 
 ```python
-d = [infinity] * n # O(V)
+d = [infinity] * n
 min_heap = [(0, source)]
 
 while (min_heap is not empty):
