@@ -1,2 +1,5 @@
+**/*.exe
+**/__pycache__
+
 quick-check.py
 todo.md
