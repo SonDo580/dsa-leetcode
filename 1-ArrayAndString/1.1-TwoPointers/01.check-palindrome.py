@@ -1,7 +1,10 @@
-# Given a string s, return true if it is a palindrome, false otherwise.
-# A string is a palindrome if it reads the same forward as backward.
-# That means, after reversing it, it is still the same string.
-# For example: "abcdcba", or "racecar".
+"""
+Given a string s, return true if it is a palindrome, false otherwise.
+A string is a palindrome if it reads the same forward as backward.
+That means, after reversing it, it is still the same string.
+For example: "abcdcba", or "racecar".
+"""
+
 
 def is_palindrome(s: str) -> bool:
     left = 0
@@ -14,3 +17,10 @@ def is_palindrome(s: str) -> bool:
         right -= 1
 
     return True
+
+
+"""
+Complexity:
+1. Time complexity: O(n)
+2. Space complexity: O(1)
+"""
