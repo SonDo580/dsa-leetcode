@@ -28,66 +28,78 @@ Heap properties:
 """
 
 
-def heapify(arr: list[int], n: int, i: int) -> None:
+# not used
+def _sift_down_recur(arr: list[int], n: int, i: int):
     """
-    Ensure the subtree rooted at index i is a max heap.
-    Only heapify elements in the unsorted portion [0, n).
+    Fix the max heap represented by arr[0..n]:
+    Move node i down the tree to its correct position.
     """
-    largest = i  # Initialize largest as root
-    left_child = 2 * i + 1
-    right_child = 2 * i + 2
+    current: int = i
+    left_child: int = 2 * i + 1
+    right_child: int = 2 * i + 2
 
-    # Left child is larger than root
-    if left_child < n and arr[left_child] > arr[largest]:
-        largest = left_child
+    if left_child < n and arr[left_child] > arr[current]:
+        current = left_child
+    if right_child < n and arr[right_child] > arr[current]:
+        current = right_child
 
-    # Right child is larger than root
-    if right_child < n and arr[right_child] > arr[largest]:
-        largest = right_child
-
-    # If largest is not root
-    if largest != i:
-        # Swap the larger child to root
-        arr[i], arr[largest] = arr[largest], arr[i]
-
-        # Recursively heapify the affected subtree
-        heapify(arr, n, largest)
+    if current != i:
+        arr[i], arr[current] = arr[current], arr[i]
+        _sift_down_recur(current)
 
 
-def heapify_iter(arr: list[int], n: int, i: int) -> None:
-    """Iterative heapify."""
+# used
+def sift_down(arr: list[int], n: int, i: int):
+    """
+    Fix the max heap represented by arr[0..n]:
+    Move node i down the tree to its correct position.
+    """
     while True:
-        largest = i
-        left_child = 2 * i + 1
-        right_child = 2 * i + 2
+        current: int = i
+        left_child: int = 2 * i + 1
+        right_child: int = 2 * i + 2
 
-        if left_child < n and arr[left_child] > arr[largest]:
-            largest = left_child
-        if right_child < n and arr[right_child] > arr[largest]:
-            largest = right_child
+        if left_child < n and arr[left_child] > arr[current]:
+            current = left_child
+        if right_child < n and arr[right_child] > arr[current]:
+            current = right_child
 
-        if largest == i:
-            break  # heap property restored
+        if current == i:
+            return
 
-        arr[i], arr[largest] = arr[largest], arr[i]
-        i = largest  # continue with affected subtree
+        arr[i], arr[current] = arr[current], arr[i]
+        i = current
+
+
+def heapify(arr: list[int], n: int):
+    """Convert arr[0..n] a max heap."""
+    # - Move backwards to heapify lower subtrees first,
+    #   so when we sift down a higher node,
+    #   it interacts with already-heapified subtree.
+    # - We only need to sift down internal nodes (exclude leaves).
+    for i in range(n // 2 - 1, -1, -1):
+        sift_down(arr, n, i)
 
 
 def heap_sort(arr: list[int]) -> None:
-    n = len(arr)
-
     # Build a max heap
-    # (start from the last non-leaf node up to the root)
-    for i in range(n // 2 - 1, -1, -1):
-        heapify(arr, n, i)
+    n = len(arr)
+    heapify(arr, n)
 
     # Extract element from the heap one by one
     for i in range(n - 1, 0, -1):
         # Move current root (max element) to the end of the unsorted portion
         arr[0], arr[i] = arr[i], arr[0]
 
-        # Heapify the reduced heap (exclude the max element just sorted)
-        heapify(arr, i, 0)
+        # Fix the reduced heap (exclude the max element just sorted)
+        sift_down(arr, n=i, i=0)
+
+
+# quick test
+if __name__ == "__main__":
+    arr = [67, 341, 234, -67, 12, -976, 7451, -5352]
+    heap_sort(arr)
+    assert arr == [-5352, -976, -67, 12, 67, 234, 341, 7451]
 
 
 """
@@ -98,12 +110,12 @@ Complexity:
 - Build initial heap: O(n)
 - Perform n - 1 extraction. Each extraction does: 
   . swap: O(1)
-  . heapify the reduced heap: O(log(n))
+  . fix the reduced heap: O(log(n))
 => Overall: O(n * log(n))
 
-2. Space complexity: 
-- recursive approach: O(log(n)) for recursion stack of 'heapify'
-- iterative approach: O(1)
+2. Space complexity:
+- iterative 'sift_down': O(1) (used)
+- recursive 'sift_down': O(log(n))
 """
 
 """
