@@ -1,7 +1,7 @@
 """
 https://leetcode.com/problems/merge-k-sorted-lists/
 
-You are given an array of k linked-lists lists,
+You are given an array of k linked-lists,
 each linked-list is sorted in ascending order.
 
 Merge all the linked-lists into one sorted linked-list and return it.
@@ -26,16 +26,16 @@ from __future__ import annotations
 
 
 class ListNode:
-    def __init__(self, val: int = 0, next: ListNode | None = None):
+    def __init__(self, val: int, next: ListNode | None = None):
         self.val = val
         self.next = next
 
 
 def merge_k_lists(lists: list[ListNode | None]) -> ListNode | None:
-    return merge(lists, start=0, end=len(lists) - 1)
+    return _merge(lists, start=0, end=len(lists) - 1)
 
 
-def merge(lists: list[ListNode | None], start: int, end: int) -> ListNode | None:
+def _merge(lists: list[ListNode | None], start: int, end: int) -> ListNode | None:
     # empty array
     if start > end:
         return None
@@ -46,16 +46,21 @@ def merge(lists: list[ListNode | None], start: int, end: int) -> ListNode | None
 
     # Recursively merge the left and right portions
     mid = (start + end) // 2
-    left_ll = merge(lists, start=start, end=mid)
-    right_ll = merge(lists, start=mid + 1, end=end)
+    left_ll = _merge(lists, start=start, end=mid)
+    right_ll = _merge(lists, start=mid + 1, end=end)
 
-    # If one is null, return the other
+    # If one is empty, return the other
     if not left_ll:
         return right_ll
     if not right_ll:
         return left_ll
 
     # Merge 2 sorted linked-lists
+    return _merge_2_lists(left_ll, right_ll)
+
+
+def _merge_2_lists(left_ll: ListNode, right_ll: ListNode) -> ListNode:
+    """Merge 2 sorted linked-lists."""
     curr_left: ListNode | None = left_ll
     curr_right: ListNode | None = right_ll
 
@@ -93,10 +98,12 @@ def merge(lists: list[ListNode | None], start: int, end: int) -> ListNode | None
 
 """
 Complexity:
-
-1. Time complexity: O(n * log(n))
-- Recursion depth: O(log(n))
+- Let k = number of lists
+      n = total number of nodes across all lists
+    
+1. Time complexity: O(n * log(k))
+- Recursion depth: O(log(k))
 - Merging at each level: O(n)
 
-2. Space Complexity: O(log(n)) for recursion stack
+2. Space Complexity: O(log(k)) for recursion stack
 """
