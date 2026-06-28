@@ -67,9 +67,10 @@ Complexity:
       b = base of the number system (10 in this case)
       
 1. Time complexity:
-- counting sort: O(n + b)
+- find max number: O(n)
 - sort by each digit: d times 
-=> Overall: O(d * (n + b))
+  . counting sort in each pass: O(n + b)
+=> Overall: O(d * (n + b) + n) = O(d * (n + b))
 
 2. Space complexity: O(n + b) for counting sort
 """

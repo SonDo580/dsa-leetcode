@@ -8,12 +8,12 @@ Key idea:
 
 def bucket_sort(arr: list[float]) -> None:
     """Sort floating-point numbers in range [0, 1]."""
-    n = len(arr)
+    n = len(arr)  # number of buckets (don't have to be len(arr))
     buckets = [[] for _ in range(n)]
 
     # Place elements into buckets
     for num in arr:
-        bucket_idx = int(n * num)
+        bucket_idx = int(n * num)  # "hash_function"
         buckets[bucket_idx].append(num)
 
     # Sort individual buckets

@@ -1,11 +1,12 @@
 """
 Key idea:
-- Count the frequency of each distinct value.
+- Have an array with indices represents value range in sorted order.
+  Count the frequency of each value.
 - Convert counts to prefix sums to know the last index
   of each value in the sorted array.
 - Iterate through the original array.
   Place each value at the last index of its block in the sorted array.
-  Decrease the counter to move the last index to the left.
+  Decrease counter for that block to move the last index to the left.
 """
 
 """
@@ -22,9 +23,9 @@ Explanation:
 """
 
 
-def counting_sort(arr: list[int]) -> list[int]:
+def counting_sort(arr: list[int]) -> None:
     if not arr:
-        return []
+        return
 
     # Find the maximum value
     max_val = max(arr)
@@ -45,7 +46,9 @@ def counting_sort(arr: list[int]) -> list[int]:
         ans[count[num] - 1] = num
         count[num] -= 1
 
-    return ans
+    # Copy sorted array back to original array
+    for i in range(n):
+        arr[i] = ans[i]
 
 
 """
@@ -58,18 +61,18 @@ Complexity:
 - Build 'count': O(n)
 - Compute prefix sum on 'count': O(k)
 - Initialize and fill 'ans': O(n)
+- Copy 'ans' back to 'arr': O(n)
 => Overall: O(n + k)
 
-2. Space complexity:
+2. Space complexity: O(n + k)
 - 'count': O(k)
-- 'ans': O(n)
-=> Overall: O(n + k)
+- 'sorted_arr': O(n)
 """
 
 """
 Stability: stable
 - We scan the input from right to left and place each value at 
-  its last available position.
+  the last available position in its block.
 """
 
 """
@@ -102,9 +105,21 @@ def counting_sort_v2(arr: list[int]) -> None:
     for num in arr:
         count[num] += 1
 
-    # Place numbers into original array
+    # Place numbers into original array in order
     k = 0
     for i in range(len(count)):
         for _ in range(count[i]):
             arr[k] = i
             k += 1
+
+
+"""
+Complexity:
+
+1. Time complexity: O(n)
+- Find maximum value: O(n)
+- Build 'count': O(n)
+- Place number into original array: O(n)
+
+2. Space complexity: O(k) for 'count'
+"""

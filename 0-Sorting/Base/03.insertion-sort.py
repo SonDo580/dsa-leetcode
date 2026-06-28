@@ -36,7 +36,7 @@ Complexity:
   + Pass 2: 2 comparisons & shifts
   + ...
   + Pass n - 1: n - 1 comparisons & shifts
-  -> Total: n * (n - 1)
+  -> Total: (n * (n - 1) / 2) * 2
   -> O(n^2)
 
 2. Space complexity: O(1)

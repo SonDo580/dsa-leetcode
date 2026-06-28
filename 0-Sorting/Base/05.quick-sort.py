@@ -171,6 +171,7 @@ def hoare_partition(arr: list[int], low: int, high: int) -> int:
             j -= 1
 
         # If pointers cross, partition is done
+        # j is now the end of x <= pivot region
         if i >= j:
             return j
 

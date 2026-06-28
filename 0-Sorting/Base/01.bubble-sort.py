@@ -7,7 +7,7 @@ Key idea:
 
 def bubble_sort(arr: list[int]) -> None:
     n = len(arr)
-    for i in range(len(arr)):
+    for i in range(n):
         swapped = False
 
         # The last i elements are already in correct positions

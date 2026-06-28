@@ -10,7 +10,7 @@ Key idea:
 """
 Minimum RUN size:
 . too small -> too many merges -> slow.
-. too larger -> insertions sort becomes slow.
+. too large -> insertion sort becomes slow.
 -> range [32, 64] gives best practical performance.
 
 - The min run size is selected such that the number of runs is equal to, 
@@ -23,24 +23,28 @@ Minimum RUN size:
 
 def calc_min_run(n: int) -> int:
     """
-    Find minimum run size such that number of runs N / min_run
+    Find minimum run size such that number of runs 'ceil(N / min_run)'
     is equal to or slightly less than a power of 2.
     """
-    # Keep halving n until it becomes smaller than 32.
+    if n < 64:
+        return n
+
+    # Keep halving n until it is in range [32, 64).
     # Detect any odd intermediate result by checking if the LSB is 1.
     r = 0
-    while n >= 32:
+    while n >= 64:
         r |= n & 1
         n >>= 1
 
     # At this point:
-    # . min_run = current n = floor(N / 2^k)
+    # . current_n = floor(N / 2^k)
     # . r = 1 if N / 2^k if has a fractional part.
     #   r = 0 if N / 2^k was an exact integer.
 
-    # Round up min_run to ceil(N / 2^k) so that N / min_run <= 2^k
-    # -> min_run = min_run + 1 if r = 1 OR min_run + 0 if r = 0
-    #            = min_run + r
+    # Calculate min_run = ceil(N / 2^k)
+    # -> min_run = . current_n + 1 if r = 1
+    #              . current_n + 0 if r = 0
+    #            = current_n + r
     return n + r
 
 
@@ -129,7 +133,7 @@ def tim_sort(arr: list[int]) -> None:
         run_end = find_run(arr, i)
         run_len = run_end - i
 
-        # If the detected run is short than min_run,
+        # If the detected run is shorter than min_run,
         # extend it to min_run then apply insertion sort.
         if run_len < min_run:
             run_end = min(i + min_run, n)
@@ -141,7 +145,7 @@ def tim_sort(arr: list[int]) -> None:
         # Mark the start of the next run
         i = run_end
 
-        # Keep merging if the second latest run is shorter than the latest run
+        # Keep merging 2 latest runs if 2nd latest run is shorter than latest run
         # to avoid too many unbalanced merges later.
         while len(runs) > 1:
             start_1, end_1 = runs[-2]
@@ -155,7 +159,7 @@ def tim_sort(arr: list[int]) -> None:
             else:
                 break
 
-    # Keep merging after all runs are collected
+    # Keep merging 2 latest runs after all runs are collected
     while len(runs) > 1:
         start_1, end_1 = runs[-2]
         start_2, end_2 = runs[-1]
@@ -182,7 +186,7 @@ Complexity:
   -> Total merging cost: O(n * log(n / k)) ~ O(n * log(n))
 => Overall:
    - Worst/Average case: O(n * log(n))
-   - Best case: O(n) when the array is already sorted / reverse-sorted.
+   - Best case: O(n) when the array is already sorted.
 
 2. Space complexity: O(n) for merging runs.
 """
