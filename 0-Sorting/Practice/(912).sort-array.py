@@ -46,7 +46,7 @@ def sort_array(nums: list[int]) -> list[int]:
 
 def _radix_sort(nums: list[int]) -> None:
     if not nums:
-        return nums
+        return
 
     # Find the maximum number of digits in a number
     max_digits = _count_digits(max(nums))
@@ -97,10 +97,10 @@ Complexity:
 
 1. Time complexity: O(n)
 - split negative and non-negative numbers: O(n)
-- radix sort: O(d * (n + b)) ~ O(n)
+- radix sort: O(d * (n + b)) ~~ O(n)
 - combine sorted arrays: O(n)
 
 2. Space Complexity: O(n)
 - negative and non-negative arrays: O(n)
-- radix sort: O(n + b) ~ O(n)
+- radix sort: O(n + b) ~~ O(n)
 """
