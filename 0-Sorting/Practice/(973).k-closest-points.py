@@ -49,6 +49,8 @@ def k_closest(points: list[list[int]], k: int) -> list[list[int]]:
 def quick_select(
     points: tuple[int, int], k: int, start: int, end: int
 ) -> list[tuple[int, int]]:
+    first_start = start
+
     while start <= end:
         pivot = points[random.randint(start, end)]
         pivot_distance_squared = _get_distance_squared(pivot)
@@ -72,8 +74,9 @@ def quick_select(
             end = mid_start - 1
 
         # Result = all points in 'left' + some/all points in 'mid'
+        # (accumulate with found items from previous iterations)
         elif k <= mid_end - start + 1:
-            return points[start : start + k]
+            return points[first_start : start + k]
 
         # Search remaining points in 'right'
         # (all points in 'left' and 'mid' are in result)
