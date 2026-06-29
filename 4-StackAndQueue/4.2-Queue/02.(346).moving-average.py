@@ -50,5 +50,5 @@ Complexity:
 1. Time complexity:
 - 'next': O(1)
 
-2. Space complexity: O(n) for the queue.
+2. Space complexity: O(size) for the queue.
 """

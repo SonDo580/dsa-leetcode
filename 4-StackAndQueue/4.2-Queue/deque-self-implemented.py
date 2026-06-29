@@ -107,7 +107,7 @@ Time complexity:
 # ===== BLOCK LINKED LIST =====
 # ==============================
 """
-Use a linked list of fixed-size arrays.
+Use a doubly linked list of fixed-size arrays.
 """
 BLOCK_SIZE = 64
 
@@ -123,57 +123,57 @@ class Deque:
     def __init__(self):
         # Init a single block
         new_block = Block()
-        self.left_block: Block = new_block
-        self.right_block: Block = new_block
+        self.leftmost_block: Block = new_block
+        self.rightmost_block: Block = new_block
 
         # Start from the middle of the block
-        self.left_index: int = BLOCK_SIZE // 2
-        self.right_index: int = BLOCK_SIZE // 2 - 1
+        self.leftmost_index: int = BLOCK_SIZE // 2
+        self.rightmost_index: int = BLOCK_SIZE // 2 - 1
 
         self.size: int = 0
 
     def append_right(self, val: Any) -> None:
-        if self.right_index < BLOCK_SIZE - 1:
+        if self.rightmost_index < BLOCK_SIZE - 1:
             # Add to current right block
-            self.right_index += 1
+            self.rightmost_index += 1
         else:
             # Add a new block to the right
             new_block = Block()
-            new_block.left = self.right_block
-            self.right_block.right = new_block
-            self.right_block = new_block
-            self.right_index = 0
+            new_block.left = self.rightmost_block
+            self.rightmost_block.right = new_block
+            self.rightmost_block = new_block
+            self.rightmost_index = 0
 
-        self.right_block.data[self.right_index] = val
+        self.rightmost_block.data[self.rightmost_index] = val
         self.size += 1
 
     def append_left(self, val: Any) -> None:
-        if self.left_index > 0:
+        if self.leftmost_index > 0:
             # Add to current left block
-            self.left_index -= 1
+            self.leftmost_index -= 1
         else:
             # Add a new block to the left
             new_block = Block()
-            new_block.right = self.left_block
-            self.left_block.left = new_block
-            self.left_block = new_block
-            self.left_index = BLOCK_SIZE - 1
+            new_block.right = self.leftmost_block
+            self.leftmost_block.left = new_block
+            self.leftmost_block = new_block
+            self.leftmost_index = BLOCK_SIZE - 1
 
-        self.left_block.data[self.left_index] = val
+        self.leftmost_block.data[self.leftmost_index] = val
         self.size += 1
 
     def pop_right(self) -> Any:
         if self.size == 0:
             raise IndexError("Pop an empty deque")
 
-        val = self.right_block.data[self.right_index]
-        self.right_block.data[self.right_index] = None
-        self.right_index -= 1
+        val = self.rightmost_block.data[self.rightmost_index]
+        self.rightmost_block.data[self.rightmost_index] = None
+        self.rightmost_index -= 1
 
         # Move to previous block if index under-flows
-        if self.right_index < 0 and self.right_block.left:
-            self.right_block = self.right_block.left
-            self.right_index = BLOCK_SIZE - 1
+        if self.rightmost_index < 0 and self.rightmost_block.left:
+            self.rightmost_block = self.rightmost_block.left
+            self.rightmost_index = BLOCK_SIZE - 1
 
         # Note: current implementation doesn't remove free blocks
 
@@ -184,14 +184,14 @@ class Deque:
         if self.size == 0:
             raise IndexError("Pop an empty deque")
 
-        val = self.left_block.data[self.left_index]
-        self.left_block.data[self.left_index] = None
-        self.left_index += 1
+        val = self.leftmost_block.data[self.leftmost_index]
+        self.leftmost_block.data[self.leftmost_index] = None
+        self.leftmost_index += 1
 
         # Move to next block if index over-flows
-        if self.left_index >= BLOCK_SIZE and self.left_block.right:
-            self.left_block = self.left_block.right
-            self.left_index = 0
+        if self.leftmost_index >= BLOCK_SIZE and self.leftmost_block.right:
+            self.leftmost_block = self.leftmost_block.right
+            self.leftmost_index = 0
 
         # Note: current implementation doesn't remove free blocks
 
@@ -201,12 +201,12 @@ class Deque:
     def peek_right(self) -> Any:
         if self.size == 0:
             raise IndexError("Peek an empty deque")
-        return self.right_block.data[self.right_index]
+        return self.rightmost_block.data[self.rightmost_index]
 
     def peek_left(self) -> Any:
         if self.size == 0:
             raise IndexError("Peek an empty deque")
-        return self.left_block.data[self.left_index]
+        return self.leftmost_block.data[self.leftmost_index]
 
     def is_empty(self) -> bool:
         return self.size == 0
