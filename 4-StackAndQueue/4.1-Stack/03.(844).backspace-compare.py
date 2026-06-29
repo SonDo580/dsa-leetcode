@@ -33,14 +33,17 @@ def backspace_compare(s: str, t: str) -> bool:
 
     return get_final_string(s) == get_final_string(t)
 
+
 """
 Complexity:
-- Let n = len(s)
+- Let n = len(s), m = len(t)
 
 1. Time complexity:
-- iterate through s: O(n)
-- join remaining characters: O(n)
-=> Overall: O(n)
+- Get final string of s: O(n)
+  . iterate through s: O(n)
+  . join remaining characters: O(n)
+- Get final string of t: O(m)
+=> Overall: O(n + m)
 
-2. Space complexity: O(n) for the stack
+2. Space complexity: O(max(n, m)) for the stack
 """

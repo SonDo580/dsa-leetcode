@@ -16,8 +16,8 @@ but s = "(]" and s = "({)}" are not valid.
 """
 Idea:
 - Keep pushing opening brackets to a stack. 
-- When we encounter a closing bracket, it should correspond to 
-  the most recent opening bracket.
+- When we encounter a closing bracket, it should match 
+  the opening bracket on top of the stack.
   . If they match, pop the opening bracket off the stack.
   . If they don't match, or there's no opening brackets to pair with
     (empty stack), s is invalid.
@@ -43,7 +43,7 @@ def is_valid_parens(s: str) -> bool:
         if len(stack) == 0:
             return False
 
-        # Check if c is the closing bracket for the latest opening bracket
+        # Check if c is closing bracket for opening bracket on top of stack
         latest_opening_bracket = stack.pop()
         if matching[latest_opening_bracket] != c:
             return False

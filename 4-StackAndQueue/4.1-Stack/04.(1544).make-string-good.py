@@ -26,24 +26,18 @@ def make_string_good(s: str) -> str:
         return s
 
     stack: list[str] = []
-
-    def is_bad(char: str) -> bool:
-        """
-        Check if the current character and the top of the stack
-        make the string bad:
-        - are the same character.
-        - 1 uppercase, 1 lowercase.
-        """
-        return (
-            char.lower() == stack[-1].lower() and char.islower() != stack[-1].islower()
-        )
-
     for char in s:
         if len(stack) == 0:
             stack.append(char)
             continue
 
-        if is_bad(char):
+        # Check if current character and top of stack make the string bad
+        # (same character but 1 uppercase, 1 lowercase)
+        is_bad = (
+            char.lower() == stack[-1].lower() and char.islower() != stack[-1].islower()
+        )
+
+        if is_bad:
             stack.pop()
         else:
             stack.append(char)
