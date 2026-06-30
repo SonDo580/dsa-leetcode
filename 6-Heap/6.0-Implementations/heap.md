@@ -78,7 +78,7 @@ n = 2k (n is even)
 . n / 2 = 2k / 2 = k -> floor(k) = k
 
 n = 2k + 1 (n is odd)
-. (n - 1) / 2 = (2k + 1 - 1) / 2 = k -> cell(k) = k
+. (n - 1) / 2 = (2k + 1 - 1) / 2 = k -> ceil(k) = k
 . n / 2 = (2k + 1) / 2 = k + 0.5 -> floor(k + 0.5) = k
 ```
 
@@ -87,21 +87,25 @@ n = 2k + 1 (n is odd)
 - If i is the left child:
 
 ```
-i = 2p + 1
--> p = (i - 1) / 2
+. i = 2p + 1
+  -> p = (i - 1) / 2
 
-i is odd -> i - 1 is even -> (i - 1) / 2 is an integer
--> p = (i - 1) // 2
+. i is odd -> i - 1 is even -> (i - 1) / 2 is an integer
+  -> p = (i - 1) // 2
 ```
 
 - If i is the right child:
 
 ```
-i = 2p + 2
--> p = (i - 2) / 2 = i / 2 - 1
+. i = 2p + 2
+  -> p = (i - 2) / 2 = i / 2 - 1
 
-i is even -> i / 2 is an integer -> i / 2 - 1 is an integer
--> p = (i - 1) // 2
+. i is even -> i / 2 is an integer -> (i / 2 - 1 is an integer)
+
+. (i - 1) / 2 = i / 2 - 1 / 2
+  -> (i - 1) // 2 = i / 2 - 1
+
+=> p = (i - 1) // 2
 ```
 
 # Using built-in heap implementations:

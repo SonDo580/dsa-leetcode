@@ -16,13 +16,27 @@ class MinHeap:
         self._heap: list[int] = lst[:]  # avoid mutating the original list
         self.__heapify()
 
+    @staticmethod
+    def __parent_idx(i: int) -> int:
+        return (i - 1) // 2
+
+    @staticmethod
+    def __left_child_idx(i: int) -> int:
+        return 2 * i + 1
+
+    @staticmethod
+    def __right_child_idx(i: int) -> int:
+        return 2 * i + 2
+
     def __heapify(self) -> None:
-        """Convert the cloned list to a heap in O(n)."""
+        """
+        Convert the cloned list to a heap in O(n)
+        (see complexity analysis at the end of this file).
+        """
         # - Move backwards to heapify lower subtrees first,
         #   so when we sift down a higher node,
-        #   it interacts with already heapified subtree.
-        # - We only need to sift down the internal nodes.
-        #   Exclude the leaves.
+        #   it interacts with already-heapified subtree.
+        # - We only need to sift down internal nodes (exclude leaves).
         for i in range(len(self._heap) // 2 - 1, -1, -1):
             self.__sift_down(i)
 
@@ -31,24 +45,24 @@ class MinHeap:
         Move an item up the tree to its correct position.
         Time complexity: 0(log(n)) (~ tree height)
         """
-        parent: int = (i - 1) // 2
+        parent: int = MinHeap.__parent_idx(i)
         while i > 0 and self._heap[parent] > self._heap[i]:
             self._heap[parent], self._heap[i] = (
                 self._heap[i],
                 self._heap[parent],
             )
             i = parent
-            parent = (i - 1) // 2
+            parent = MinHeap.__parent_idx(i)
 
-    def __sift_down(self, i: int) -> None:
+    def __sift_down_recur(self, i: int) -> None:
         """
         Move an item down the tree to its correct position.
         Time complexity: 0(log(n)) (~ tree height)
         """
         n: int = len(self._heap)
         current: int = i
-        left_child: int = 2 * i + 1
-        right_child: int = 2 * i + 2
+        left_child: int = MinHeap.__left_child_idx(i)
+        right_child: int = MinHeap.__right_child_idx(i)
 
         if left_child < n and self._heap[left_child] < self._heap[current]:
             current = left_child
@@ -61,6 +75,31 @@ class MinHeap:
                 self._heap[i],
             )
             self.__sift_down(current)
+
+    def __sift_down(self, i: int) -> None:
+        """
+        Move an item down the tree to its correct position.
+        Time complexity: 0(log(n)) (~ tree height)
+        """
+        n: int = len(self._heap)
+        while True:
+            current: int = i
+            left_child: int = MinHeap.__left_child_idx(i)
+            right_child: int = MinHeap.__right_child_idx(i)
+
+            if left_child < n and self._heap[left_child] < self._heap[current]:
+                current = left_child
+            if right_child < n and self._heap[right_child] < self._heap[current]:
+                current = right_child
+
+            if current == i:
+                return
+
+            self._heap[i], self._heap[current] = (
+                self._heap[current],
+                self._heap[i],
+            )
+            i = current
 
     def heappush(self, item: int) -> None:
         """Add an item to the heap in O(log n)."""
@@ -142,22 +181,23 @@ if __name__ == "__main__":
 Time complexity of 'heapify' in detailed:
 
 - At height = 0 (leaves):
-  . max cost of heapify: 0 
-  . max number of nodes: max n / 2
+  . max cost of heapify: 0
+  . max number of nodes: about n / 2 (n // 2 + 1 for full tree)
 - At height = 1:
   . max cost of heapify: 1
-  . max number of nodes: n / 4
+  . max number of nodes: about n / 4
 - ...
 - At height = log2(n) (root):
   . max cost of heapify: log2(n)
   . max number of nodes: 1
 
 => Total build cost: T = (n/2)*0 + (n/4)*1 + (n/8)*2 + ... + 1*log2(n)
-T <= n * ((1/4 + 2/8) + 3/16 + 4/32 + 5/64 + 6/128 + ...)
-   = n * (1/2 + 3/16 + 1/8 + 5/64 + 1/32 + ...)
-  <= n * (1/2 + 1/4 + 1/8 + 1/16 + ...)
-   = n * 1      (geometric series sum)
-   = n
-
+. T <= n * (1/4 + 2/8 + 3/16 + 4/32 + 5/64 + 6/128 + ...)
+.   S = 1/4 + 2/8 + 3/16 + 4/32 + 5/64 + 6/128 + ...
+  S/2 =       1/8 + 2/16 + 3/32 + 4/64 + 5/128 + ...
+S-S/2 = 1/4 + 1/8 + 1/16 + 1/32 + 1/64 + 1/128 + ...
+      = 1/2 (geometric series sum)
+-> S = 1
+-> T <= n
 => Time complexity: O(n)
 """
