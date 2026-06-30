@@ -136,3 +136,65 @@ Complexity:
 2. Space complexity: 
 - frequency dict: O(100) = O(1) 
 """
+
+
+# === Follow-up 2: If 99% of numbers are in range [0..100] ===
+# ============================================================
+"""
+- Since 99% of numbers are in range [0..100],
+  the median will also fall into that range.
+- We can use the same approach as follow-up 1.
+  Just add 2 more entries for numbers < 0 and numbers > 100.
+  Start the array from (numbers < 0) entry.
+"""
+
+
+class MedianFinder:
+    def __init__(self):
+        self._total: int = 0
+
+        self._count: list[int] = [0] * 103
+        # _count[0]: for num < 0
+        # _count[1..101]: for 0 <= n <= 100
+        # _count[102]: for num > 100
+
+    def add_num(self, num: int) -> None:
+        self._total += 1
+        if num < 0:
+            self._count[0] += 1
+        elif num > 100:
+            self._count[102] += 1
+        else:
+            self._count[num + 1] += 1
+
+    def find_median(self) -> float:
+        cumulative_cnt = 0
+        half = self._total // 2
+        total_even = (self._total % 2) == 0
+
+        ans: float = -1
+        for num, freq in enumerate(self._count):
+            cumulative_cnt += freq
+            if cumulative_cnt > half:
+                ans = num - 1  # offset by 1
+                break
+            elif cumulative_cnt == half:
+                # offset 2 middle elements by 1
+                ans = ((num - 1) + num) / 2 if total_even else num  
+                break
+
+        assert 0 <= ans <= 100
+        return ans
+
+
+"""
+Complexity:
+
+1. Time complexity:
+- __init__: O(1)
+- add_num: O(1)
+- find_median: O(1)
+
+2. Space complexity: 
+- frequency dict: O(1) 
+"""
