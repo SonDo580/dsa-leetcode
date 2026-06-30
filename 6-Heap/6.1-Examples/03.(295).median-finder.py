@@ -78,3 +78,61 @@ Complexity:
 
 2. Space complexity: O(n) (for storing the heaps)
 """
+
+
+# === Follow-up 1: If all numbers are in range [0..100] ===
+# =========================================================
+"""
+- Use an array of size 101 to store frequencies of each number.
+- add_num: 
+  . Increment frequency of num 
+  . Increment total count.
+- find_median: 
+  . Iterate through frequencies until cumulative_count >= total_count // 2 
+  . If total_count is odd:
+    . If cumulative_count == total_count // 2: 
+        median = current_slot + 1
+    . If cumulative_count > total_count // 2: 
+        median = current_slot
+  . If total_count is even:
+    . If cumulative_count == total_count // 2: 
+        median = avg(current_slot, current_slot + 1)
+    . If cumulative_count > total_count // 2: 
+        median = avg(current_slot, current_slot) = current_slot
+"""
+
+
+class MedianFinder:
+    def __init__(self):
+        self._count: list[int] = [0] * 101
+        self._total: int = 0
+
+    def add_num(self, num: int) -> None:
+        assert 0 <= num <= 100
+        self._count[num] += 1
+        self._total += 1
+
+    def find_median(self) -> float:
+        cumulative_cnt = 0
+        half = self._total // 2
+        total_even = (self._total % 2) == 0
+
+        for num, freq in enumerate(self._count):
+            cumulative_cnt += freq
+            if cumulative_cnt > half:
+                return num
+            elif cumulative_cnt == half:
+                return (num + (num + 1)) / 2 if total_even else num + 1
+
+
+"""
+Complexity:
+
+1. Time complexity:
+- __init__: O(100) = O(1)
+- add_num: O(1)
+- find_median: O(100) = O(1)
+
+2. Space complexity: 
+- frequency dict: O(100) = O(1) 
+"""
