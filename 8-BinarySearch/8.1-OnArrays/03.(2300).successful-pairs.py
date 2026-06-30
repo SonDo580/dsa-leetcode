@@ -34,10 +34,7 @@ Analysis:
 
 def successful_pairs(spells: list[int], potions: list[int], success: int) -> list[int]:
     def find_insertion_point(arr: list[int], target: int) -> int:
-        """
-        Find position to insert 'target' in ascending array 'arr'.
-        Return the left most possible position.
-        """
+        """Return the leftmost i with arr[i] >= target."""
         left = 0
         right = len(arr) - 1
 
@@ -70,7 +67,5 @@ Complexity:
   + Perform binary search on 'potions' in each iteration: O(log(m)) 
 => Overall: O((m + n) * log(m))
 
-2. Space complexity:
-- Sort 'potions' (depends on the algorithm): Python's timsort takes O(m)
-=> Overall: O(m)
+2. Space complexity: O(m) for sorting 'potions' (timsort)
 """
