@@ -11,8 +11,8 @@ You may return the answer in any order.
 The answer is guaranteed to be unique (except for the order that it is in).
 """
 
-# ===== Approach 1: Max Heap =====
-# ================================
+# ===== Approach 1.1: Max Heap =====
+# ==================================
 """
 - Add the points and corresponding distances to a max heap
   (simulate a max heap with heapq by negating the distance)
@@ -24,7 +24,7 @@ import heapq
 
 
 def k_closest_points(points: list[list[int]], k: int) -> list[list[int]]:
-    heap = []
+    heap: list[tuple[int, list[int]]] = []  # max heap
 
     for point in points:
         x, y = point
@@ -47,6 +47,42 @@ Complexity:
 
 2. Space Complexity: O(k) for the heap
 """
+
+
+# ===== Approach 1.2: Min Heap =====
+# ==================================
+"""
+- Add all points and corresponding distances to a min heap
+- Pop k smallest-distance items from the heap and add to result.
+"""
+
+
+def k_closest_points(points: list[list[int]], k: int) -> list[list[int]]:
+    heap: list[tuple[int, list[int]]] = []  # min heap
+
+    for point in points:
+        x, y = point
+        distance_squared = x**2 + y**2
+        heapq.heappush(heap, (distance_squared, point))
+
+    ans: list[list[int]] = []
+    for _ in range(k):
+        ans.append(heapq.heappop(heap)[1])
+
+    return ans
+
+
+"""
+Complexity:
+
+1. Time complexity:
+- Add n items to min heap: O(n * log(n))
+- Pop k items from min heap: O(k * log(n))
+=> Overall: O((n + k)*log(n))
+
+2. Space Complexity: O(n) for the heap
+"""
+
 
 # ===== Approach 2: Quick Select =====
 # ====================================

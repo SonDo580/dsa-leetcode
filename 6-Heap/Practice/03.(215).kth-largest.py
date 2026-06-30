@@ -1,26 +1,27 @@
 """
 https://leetcode.com/problems/kth-largest-element-in-an-array
 
-Given an integer array nums and an integer k,
+Given an integer array 'nums' and an integer k,
 return the kth largest element in the array.
 Note that it is the kth largest element in the sorted order,
 not the kth distinct element.
 Can you solve it without sorting?
 """
 
-# ========== Approach 1: Min Heap ==========
-# ==========================================
+# ========== Approach 1.1: Min Heap ==========
+# ============================================
 """
 - Keep adding elements to a min heap.
 - When the heap size exceed k, pop the smallest element.
-- Return the min element in the heap at the end.
+- In the end, k largest elements remains in the heap.
+  Return the min element in the heap.
 """
 
 import heapq
 
 
 def find_kth_largest(nums: list[int], k: int) -> int:
-    heap = []
+    heap: list[int] = []
 
     for num in nums:
         heapq.heappush(heap, num)
@@ -32,6 +33,7 @@ def find_kth_largest(nums: list[int], k: int) -> int:
 
 """
 Complexity:
+- Let n = len(nums)
 
 1. Time complexity:
 - n iterations, heap operations in each iteration take O(log(k)) 
@@ -41,14 +43,13 @@ Complexity:
 """
 
 
-# ========== Approach 2: Max Heap ==========
-# ==========================================
+# ========== Approach 1.2: Max Heap ==========
+# ============================================
 """
-- Convert 'nums' to a heap.
+- Convert 'nums' to a max heap.
 - Pop k - 1 elements from the max heap.
-- Return the max element in the heap at the end.
-- Python's 'heapq' implements a min heap. 
-  -> negate the values to simulate a max heap.
+  Return the max element in the heap.
+- Note: with heapq, negate the values to simulate a max heap.
 """
 
 
@@ -72,9 +73,10 @@ Complexity:
 => Overall: O(n + k * log(n))
 
 2. Space complexity: O(1) (rearrange 'nums' in-place)
+   (if mutating is now allowed: O(n) for the heap)
 """
 
 
-# ========== Approach 3: Quick Select ==========
+# ========== Approach 2: Quick Select ==========
 # ==============================================
 # (see Sorting section)
