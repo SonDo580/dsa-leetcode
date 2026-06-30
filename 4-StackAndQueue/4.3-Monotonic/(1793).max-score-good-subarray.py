@@ -11,9 +11,9 @@ Return the maximum possible score of a good subarray.
 """
 Problem articulation:
 - subarray_score = min_value * size
--> Find the longest window that has nums[i] as the minimum element. 
+-> For each element, find the longest window where it is minimum.
    Calculate score if 2 bounds satisfy i <= k <= j.
-   Repeat for all nums[i] and take the maximum score.
+   Repeat for all elements and take the maximum score.
 """
 
 """
@@ -71,7 +71,16 @@ Complexity:
 # ========== IMPROVEMENT ==========
 # =================================
 """
-- We can record the boundaries of each subarray in advance.
+- Let say nums[i] has boundary at left_bound[i].
+  . if nums[i+1] > nums[i], its left_bound = i
+  . if nums[i+1] == nums[i], its left_bound = left_bound[i]
+  . if nums[i+1] > nums[i], its left_bound <= left_bound[i]
+    (equal if left_bound[i] == 0)
+- See that for nums[i+1] >= nums[i], we have to search through
+  the same elements (and more) as nums[i].
+  Efficiency can be improved if we can skip over those.
+=> We can record the left bound of each subarray in 1 pass
+   using monotonic stack (right bound is similar).
 
 - Find left bound of longest subarray that has min = nums[i]:
   . Keep pushing indices to a stack.
@@ -95,11 +104,10 @@ Complexity:
 
 def maximum_score(nums: list[int], k: int) -> int:
     n = len(nums)
-    left_bounds = [0] * n
-    right_bounds = [n - 1] * n
 
     # Find left bound for longest subarray that has min = nums[i]
     stack: list[int] = []  # store indices
+    left_bounds = [0] * n
     for i in range(n):
         # Pop until encounter value < nums[i]
         while stack and nums[stack[-1]] >= nums[i]:
@@ -114,6 +122,7 @@ def maximum_score(nums: list[int], k: int) -> int:
 
     # Find right bound for longest subarray that has min = nums[i]
     stack = []  # reset the stack
+    right_bounds = [n - 1] * n
     for i in range(n - 1, -1, -1):
         # Pop until encounter value < nums[i]
         while stack and nums[stack[-1]] >= nums[i]:

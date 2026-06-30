@@ -11,13 +11,13 @@ If it doesn't exist, return -1 for this number.
 """
 
 """
-1. Simplified problem: 
+1. Simplified problem (496.next-greater-element): 
 Find the next greater element for each element in an array,
 without circulation.
 - Keep pushing elements to a stack.
 - Before pushing, keep popping elements that are less than 
   current element off the stack.
-  Record answers for those elements. 
+  Record answers for those elements.
 
 2. Main problem: Do it with circulation
 - We should only search circularly once.
@@ -44,7 +44,7 @@ def next_greater_elements(nums: list[int]) -> list[int]:
         while stack and doubled_nums[stack[-1]] < num:
             j = stack.pop()
 
-            # Record answer for "real" element
+            # Only record answer for "real" element
             if j < n:
                 ans[j] = num
 

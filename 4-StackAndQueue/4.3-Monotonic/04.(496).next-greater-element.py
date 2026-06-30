@@ -22,9 +22,15 @@ Brute-force approach: O(m * n^2) (m = nums1.length, n = nums2.length)
 - For each element nums1[i], find the equal element nums2[j],
   then scan forward in nums2 to find the first greater element.
 
-=> Improvement:
-- Iterate through nums2 and push elements to a stack.
-  (the stack is monotonically non-increasing)
+Idea: do it backward
+- For each item in nums2, scan backward and record answers
+  for smaller items which is also in nums1.
+- Efficiency can be improved if we can skip the items whose
+  answers have been recorded on subsequent searches.
+=> Use a monotonically non-increasing stack.
+
+Implementation:
+- Iterate through nums2 and push elements to the stack.
 - Before pushing, keep popping elements off the stack if 
   they are less than current nums2[j'].
 - For each popped-off nums2[j], check if that number exists in nums1.

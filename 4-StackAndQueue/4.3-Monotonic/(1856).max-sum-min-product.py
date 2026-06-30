@@ -26,6 +26,7 @@ Idea:
   . Calculate min_product = x * total_sum
   Compare the results for all elements to find the maximum min_product.
 - To find the longest subarray that contains x and has min = x
+  (similar to '(1793).max-score-good-subarray')
   + Find the left bound:
 `   . Iterate through nums 
     . Keep pushing elements onto a stack
@@ -34,11 +35,11 @@ Idea:
       The default left bound is 0 (when the stack is empty).
   + Find the right bound: 
     . Use similar algorithm but iterate in reverse.
-    . The right bound is (top_of_stack -1 1) if the stack is not empty.
+    . The right bound is (top_of_stack - 1) if the stack is not empty.
       The default right bound is n - 1 (when the stack is empty).
 - To calculate subarray sum efficiently, build the prefix sum array. 
-  . prefixSum[i] = total sum of elements up to i
-  . prefixSum[j] - prefixSum[i - 1] = total sum of elements in range [i, j] (if i > 0)
+  . prefixSum[i] = total sum of elements up to i (range [0..i])
+  . prefixSum[j] - prefixSum[i - 1] = total sum of elements in range [i..j] (if i > 0)
 """
 
 
@@ -73,8 +74,7 @@ def max_sum_min_product(nums: list[int]) -> int:
         prefix_sum.append(current_sum)
 
     # Find maximum min_product
-    # (all numbers are positive so products are positive)
-    result: int = -1
+    result: int = -1 # (all numbers are positive so products are positive)
     for i in range(n):
         subarray_sum = prefix_sum[right_bounds[i]]
         if left_bounds[i] > 0:

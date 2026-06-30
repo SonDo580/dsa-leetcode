@@ -11,7 +11,14 @@ If there is no future day that is warmer, have answer[i] = 0 instead.
 Brute-force approach: O(n^2)
 - For each day, scan forward until we find a warmer day.
 
-Improvement:
+Idea: do it backward
+- For each day, scan backward and record answers for cooler days.
+  Stop when encountering a warmer day.
+- Efficiency can be improved if we can somehow skip the days whose
+  answers have been recorded on subsequent searches.
+=> Use a monotonically non-increasing stack.
+
+Implementation:
 - Use a stack to store indices (days).
 - For each day:
   + Keep popping days with lower temperature off the stack
@@ -44,6 +51,7 @@ def daily_temperature(temperatures: list[int]) -> list[int]:
         stack.append(i)
 
     return answers
+
 
 """
 Complexity:
