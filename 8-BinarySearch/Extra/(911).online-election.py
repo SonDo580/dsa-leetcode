@@ -1,7 +1,7 @@
 """
 https://leetcode.com/problems/online-election
 
-You are given two integer arrays persons and times.
+You are given two integer arrays 'persons' and 'times'.
 In an election, the ith vote was cast for persons[i] at time times[i].
 
 For each query at a time t, find the person that was leading the election at time t.
@@ -34,7 +34,6 @@ from collections import defaultdict
 
 
 class TopVotedCandidate:
-
     def __init__(self, persons: list[int], times: list[int]):
         self.persons = persons
         self.times = times
@@ -52,9 +51,7 @@ class TopVotedCandidate:
             if votes_count[person] >= max_votes:
                 max_votes = votes_count[person]
                 top_voted = person
-                top_voted_records.append(person)
-            else:
-                top_voted_records.append(top_voted)
+            top_voted_records.append(top_voted)
 
         return top_voted_records
 
@@ -76,3 +73,44 @@ Complexity:
 2. Space Complexity: O(n) for top_voted_records
 (O(n) for votes_count dictionary, only when building top_voted_records)
 """
+
+
+# === Simulate stream of votes ====
+"""
+- Add vote() method to record vote for a persons[i] at times[i]. 
+- Implementation is similar to above, 
+  but "promote" some local variables to instance state.
+"""
+
+
+class TopVotedCandidate:
+    def __init__(self, persons: list[int], times: list[int]):
+        self.persons: list[int] = []
+        self.times: list[int] = []
+
+        self.top_voted_records: list[int] = []
+        self.votes_count: defaultdict[int, int] = defaultdict(int)
+        self.top_voted = -1
+        self.max_votes = 0
+        for i in range(len(persons)):
+            self.vote(persons[i], times[i])
+
+    def vote(self, person: int, time: int):
+        """Vote for 'person' at 'time'.
+        Also update data for tracking top-voted.
+        """
+        self.persons.append(person)
+        self.times.append(time)
+
+        self.votes_count[person] += 1
+        if self.votes_count[person] >= self.max_votes:
+            self.max_votes = self.votes_count[person]
+            self.top_voted = person
+        self.top_voted_records.append(self.top_voted)
+
+    def q(self, t: int) -> int:
+        # Find the first T such that T > t
+        idx = bisect.bisect_right(self.times, t)
+
+        # Return the top-voted candidate right before T
+        return self.top_voted_records[idx - 1]

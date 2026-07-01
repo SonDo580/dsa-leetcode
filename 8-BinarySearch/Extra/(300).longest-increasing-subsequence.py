@@ -4,23 +4,6 @@ https://leetcode.com/problems/longest-increasing-subsequence
 Given an integer array 'nums',
 return the length of the longest strictly increasing subsequence.
 
-Example 1:
-Input: nums = [10,9,2,5,3,7,101,18]
-Output: 4
-Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
-
-Example 2:
-Input: nums = [0,1,0,3,2,3]
-Output: 4
-
-Example 3:
-Input: nums = [7,7,7,7,7,7,7]
-Output: 1
-
-Constraints:
-1 <= nums.length <= 2500
--10^4 <= nums[i] <= 10^4
-
 Follow up: Can you come up with an algorithm that runs in O(n * log(n)) time complexity?
 """
 
@@ -117,7 +100,8 @@ def LIS(nums: list[int]) -> list[int]:
             idx = bisect.bisect_left(tails, num)
             tails[idx] = num
             tail_indices[idx] = i
-            prev[i] = tail_indices[idx - 1]
+            if idx > 0:
+                prev[i] = tail_indices[idx - 1]
 
     # reconstruct the LIS
     reversed_lis: list[int] = []
@@ -140,7 +124,7 @@ Complexity:
 2. Space complexity:
 - 'tails': O(n)
 - 'tail_indices': O(n)
-- 'previous': O(n)
+- 'prev': O(n)
 => Overall: O(n)
 """
 
@@ -154,5 +138,5 @@ Complexity:
   . 'tails' only stores smallest tail for subsequence lengths.
   . each entry in 'prev' only points to a single predecessor.
 
--> Use O(n^2) DP (see DynamicProgramming section).
+-> Use DP (see DynamicProgramming section).
 """

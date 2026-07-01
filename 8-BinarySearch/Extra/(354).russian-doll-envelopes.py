@@ -11,20 +11,6 @@ Return the maximum number of envelopes you can Russian doll
 (i.e., put one inside the other).
 
 Note: You cannot rotate an envelope.
-
-Example 1:
-Input: envelopes = [[5,4],[6,4],[6,7],[2,3]]
-Output: 3
-Explanation: The maximum number of envelopes you can Russian doll is 3 ([2,3] => [5,4] => [6,7]).
-
-Example 2:
-Input: envelopes = [[1,1],[1,1],[1,1]]
-Output: 1
-
-Constraints:
-1 <= envelopes.length <= 10^5
-envelopes[i].length == 2
-1 <= wi, hi <= 10^5
 """
 
 """
@@ -71,7 +57,7 @@ Complexity:
 => Overall: O(n * log(n))
 
 2. Space complexity:
-- Sort 'envelopes': Python's timsort takes O(n)
+- Sort 'envelopes': O(n) (timsort)
 - 'heights': O(n)
 - 'tails': O(n)
 => Overall: O(n)
