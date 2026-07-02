@@ -1,4 +1,6 @@
 """
+https://leetcode.com/problems/min-cost-climbing-stairs/
+
 You are given an integer array 'cost'
 where cost[i] is the cost of ith step on a staircase.
 Once you pay the cost, you can either climb one or two steps.
@@ -14,9 +16,7 @@ Return the minimum cost to reach the top of the floor.
 - We can climb to i either from i - 1 or i - 2
   -> Recurrence relation:
   . dp(i) = min(dp(i-1) + cost[i-1], dp(i-2)+cost[i-2])
-
-3. Base cases
-- We can start at step 0 or 1
+- Base cases: We can start at step 0 or 1
   -> dp(0) = dp(1) = 0
 """
 
@@ -39,7 +39,6 @@ def min_cost_climbing_stairs(cost: list[int]) -> int:
 """
 Complexity:
 1. Time complexity: O(n)
-
 2. Space complexity: O(n) for memoization and recursion stack
 """
 
@@ -61,7 +60,6 @@ def min_cost_climbing_stairs(cost: list[int]) -> int:
 """
 Complexity:
 1. Time complexity: O(n)
-
 2. Space complexity: O(n) for 'dp'
 """
 
@@ -82,6 +80,5 @@ def min_cost_climbing_stairs(cost: list[int]) -> int:
 """
 Complexity:
 1. Time complexity: O(n)
-
 2. Space complexity: O(1)
 """

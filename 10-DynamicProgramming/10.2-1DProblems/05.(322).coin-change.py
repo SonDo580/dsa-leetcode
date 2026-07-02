@@ -150,6 +150,8 @@ Complexity:
 """
 - Each step only decides whether to take or skip 1 coin of type coins[i].
   Pick the option that leads to less number of total coins.
+- Let dp(i, remaining_amount) be the minimum number of coins we need
+  to exchange remaining_amount, using coins[i:].
 """
 
 

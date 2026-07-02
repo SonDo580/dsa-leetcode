@@ -4,23 +4,6 @@ https://leetcode.com/problems/longest-increasing-subsequence
 Given an integer array 'nums',
 return the length of the longest strictly increasing subsequence.
 
-Example 1:
-Input: nums = [10,9,2,5,3,7,101,18]
-Output: 4
-Explanation: The longest increasing subsequence is [2,3,7,101], therefore the length is 4.
-
-Example 2:
-Input: nums = [0,1,0,3,2,3]
-Output: 4
-
-Example 3:
-Input: nums = [7,7,7,7,7,7,7]
-Output: 1
-
-Constraints:
-1 <= nums.length <= 2500
--10^4 <= nums[i] <= 10^4
-
 Follow up: Can you come up with an algorithm that runs in O(n * log(n)) time complexity?
 """
 
@@ -57,6 +40,7 @@ def length_of_LIS(nums: list[int]) -> int:
 
 """
 1. Time complexity: O(n^2)
+- init 'dp': O(n)
 - build 'dp': O(n^2)
 - find max(dp): O(n)
 
@@ -165,7 +149,7 @@ Complexity:
 - Let prev[i] store the list of predecessor indices in all LISs ending at nums[i].
 - After computing 'dp' and 'prev', find all indices where dp[i] = length of LIS.
   Each is a valid ending point.
-- Perform DFS/backtracking from those points through 'prev' to enumerate all LISs.
+- Perform backtracking from those points through 'prev' to enumerate all LISs.
 """
 
 
@@ -196,6 +180,7 @@ def all_LISs(nums: list[int]) -> list[list[int]]:
     return _collect_LISs_recur(nums, prev, end_indices)
     # return _collect_LISs_iter(nums, prev, end_indices)
 
+
 """
 Complexity: TODO
 """
@@ -207,7 +192,7 @@ def _collect_LISs_recur(
     lis_list: list[list[int]] = []
     reversed_path: list[int] = []  # shared and mutable
 
-    def dfs(i: int) -> None:
+    def backtrack(i: int) -> None:
         reversed_path.append(nums[i])
 
         if len(prev[i]) == 0:
@@ -216,13 +201,13 @@ def _collect_LISs_recur(
         else:
             # Explore all predecessors
             for p in prev[i]:
-                dfs(p)
+                backtrack(p)
 
-        reversed_path.pop()  # backtrack
+        reversed_path.pop()
 
-    # Start DFS from each LIS ending index
+    # Start from each LIS ending index
     for i in end_indices:
-        dfs(i)
+        backtrack(i)
 
     return lis_list
 

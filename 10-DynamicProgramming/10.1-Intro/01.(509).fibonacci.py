@@ -76,7 +76,6 @@ def fibonacci(n: int) -> int:
 """
 Complexity:
 1. Time complexity: O(n)
-
 2. Space complexity: O(n) for 'dp'.
 """
 
@@ -103,6 +102,5 @@ def fibonacci(n: int) -> int:
 """
 Complexity:
 1. Time complexity: O(n)
-
 2. Space complexity: O(1)
 """
