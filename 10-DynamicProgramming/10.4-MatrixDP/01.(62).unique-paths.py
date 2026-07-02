@@ -2,9 +2,12 @@
 https://leetcode.com/problems/unique-paths/
 
 There is a robot on an m x n grid.
-The robot is initially located at the top-left corner and wants to move to the bottom-right corner.
-The robot can only move either down or right. Given m and n,
-return the number of possible unique paths that the robot can take to reach the bottom-right corner.
+The robot is initially located at the top-left corner
+and wants to move to the bottom-right corner.
+The robot can only move either down or right.
+
+Given m and n, return the number of possible unique paths that
+the robot can take to reach the bottom-right corner.
 """
 
 """
@@ -58,7 +61,7 @@ Complexity:
 
 1. Time complexity: O(m * n)
 
-2. Space complexity: O(m * n + m + n) = O(m * n)
+2. Space complexity: O(m * n)
 - memoization table: O(m * n)
 - recursion stack: O(m + n)
 """
@@ -81,9 +84,7 @@ def unique_paths(m: int, n: int) -> int:
 
 """
 Complexity:
-
 1. Time complexity: O(m * n)
-
 2. Space complexity: O(m * n) for 'dp'
 """
 
@@ -120,17 +121,16 @@ def unique_paths(m: int, n: int) -> int:
 
 """
 Complexity:
-
 1. Time complexity: O(m * n)
-
 2. Space complexity: O(n) for 'last_dp' and 'current_dp'
 """
+
 
 # ===== Bottom-up (optimize space further) =====
 """
 - Once dp[row - 1][col] is "used" by dp[row][col],
   we don't need dp[row - 1][col] anymore.
--> Just use 1 array 'dp' and modify it in-place.
+  -> Just use 1 array 'dp' and modify it in-place.
 """
 
 
@@ -139,6 +139,8 @@ def unique_paths(m: int, n: int) -> int:
     dp[0] = 1
 
     for _ in range(m):
+        # each dp[col] retains value from last iteration
+        # (initial dp[row][col] = dp[row-1][col])
         for col in range(n):
             if col > 0:
                 dp[col] += dp[col - 1]
@@ -148,8 +150,6 @@ def unique_paths(m: int, n: int) -> int:
 
 """
 Complexity:
-
 1. Time complexity: O(m * n)
-
 2. Space complexity: O(n) for 'dp'
 """
