@@ -21,8 +21,9 @@ Identifying DP problem:
 
 Solution:
 - Let dp(i, j) returns the length of the longest common subsequence
-  if we start at i of text1 and j of text2
-- For each pair (i, j) there are 2 possibilities:
+  if we start at i of text1 and j of text2.
+  -> result = dp(0, 0)
+- For each pair (i, j), there are 2 possibilities:
   . text1[i] == text2[j]: 
     We found a match and should use it to increase the length.
     After matching, move to the next character in both strings:
@@ -33,7 +34,7 @@ Solution:
     -> dp(i, j) = max(dp(i + 1, j), dp(i, j + 1))
 - Base case:
   . i = text1.length OR j = text2.length
-  -> no common characters (because 1 string has no characters remaining) 
+  -> no common characters (1 string has no characters remaining) 
   -> return 0
 """
 
@@ -170,7 +171,7 @@ Complexity:
 """
 
 
-# ===== Extra: Find 1 LCS =====
+# ===== Extra 1: Find 1 LCS =====
 def longest_common_subsequence(text1: str, text2: str) -> int:
     n = len(text1)
     m = len(text2)
@@ -183,7 +184,6 @@ def longest_common_subsequence(text1: str, text2: str) -> int:
             else:
                 dp[i][j] = max(dp[i + 1][j], dp[i][j + 1])
 
-    # Backtrack to find 1 LCS
     i, j = 0, 0
     lcs: list[str] = []
 
@@ -209,12 +209,53 @@ Complexity:
 
 1. Time complexity: O(m * n)
 - DP: O(m * n)
-- backtrack: O(m + n)
+- find LCS: O(m + n)
 
 2. Space complexity: O(m * n) for 'dp'
-! Note that we must keep the full 2D table for backtracking.
+! Note that we must keep the full 2D table for tracking LCS.
 """
 
 
-# ===== Find all LCSs =====
-# TODO
+# ===== Extra 2: Find all LCSs =====
+def longest_common_subsequence(text1: str, text2: str) -> int:
+    n = len(text1)
+    m = len(text2)
+
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n - 1, -1, -1):
+        for j in range(m - 1, -1, -1):
+            if text1[i] == text2[j]:
+                dp[i][j] = 1 + dp[i + 1][j + 1]
+            else:
+                dp[i][j] = max(dp[i + 1][j], dp[i][j + 1])
+
+    lcs_set: set[str] = set()  # use a set for deduplication
+
+    def backtrack(i: int, j: int, current_path: list[str]) -> None:
+        # exhausted 1 string (or both)
+        if i == n or j == m:
+            lcs_set.add("".join(current_path))
+            return
+
+        # characters match -> must be in current LCS
+        if text1[i] == text2[j]:
+            current_path.append(text1[i])
+            backtrack(i + 1, j + 1, current_path)
+            current_path.pop()  # backtrack
+            return
+
+        # characters mismatch
+        # . dp[i][j] = max(dp[i + 1][j], dp[i][j + 1])
+        # -> move in the direction of larger DP value
+        #    or explore both branches if DP values are equal
+        if dp[i][j] == dp[i + 1][j]:
+            backtrack(i + 1, j, current_path)
+        if dp[i][j] == dp[i][j + 1]:
+            backtrack(i, j + 1, current_path)
+
+    backtrack(0, 0, [])
+    print("LCSs: ", lcs_set)
+    return dp[0][0]
+
+
+"""Complexity: TODO"""
