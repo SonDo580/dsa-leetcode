@@ -1,0 +1,70 @@
+"""
+https://leetcode.com/problems/numbers-with-same-consecutive-differences/
+
+Given two integers n and k,
+return an array of all the integers of length n
+where the difference between every two consecutive digits is k.
+
+You may return the answer in any order.
+Note that the integers should not have leading zeros.
+"""
+
+"""
+Analysis:
+- For each number, we need to select n digits.
+  . The first slot has 9 options (1 -> 9).
+  . Each slot has 10 options (0 -> 9).
+- The difference between consecutive digit is k
+  -> After selecting digit x, try x - k and x + k for next digit
+     (make sure to stay in bound).
+
+Idea:
+- Use backtracking to generate all valid numbers. States needed:
+  . num: number being built
+  . last_digit: last digit of 'num'
+  . num_length: current length of 'num'
+  (last_digit and num_length can be deduced from 'num',
+   but I included them to reduce computation).
+- A valid answer is found after we select n digits.
+- Special case: if k = 0, just use the same digit for n slots.
+"""
+
+
+def numbers_with_same_consecutive_difference(n: int, k: int) -> list[int]:
+    result: list[int] = []
+
+    def backtrack(num: int, last_digit: int, num_length: int) -> None:
+        """Choose next digit for num."""
+        if num_length == n:
+            result.append(num)
+            return
+
+        for next_digit in [last_digit - k, last_digit + k]:
+            if 0 <= next_digit <= 9:
+                backtrack(num * 10 + next_digit, next_digit, num_length + 1)
+
+    def num_from_1_digit(digit: int, length: int) -> int:
+        """Generate a number of specified length from 1 digit"""
+        num = 0
+        for _ in range(length):
+            num = num * 10 + digit
+        return num
+
+    for digit in range(1, 10):
+        if k == 0:
+            result.append(num_from_1_digit(digit, length=n))
+        else:
+            backtrack(num=digit, last_digit=digit, num_length=1)
+
+    return result
+
+"""
+Complexity:
+
+1. Time complexity: O(2^n)
+- recursion depth: O(n)
+  branching factor: O(2)
+=> Total work: O(2^n)
+
+2. Space complexity: O(n) for recursion stack 
+"""
