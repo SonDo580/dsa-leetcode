@@ -1,24 +1,31 @@
-# Given the root of a binary tree,
-# return an array of the largest value in each row of the tree.
+"""
+https://leetcode.com/problems/find-largest-value-in-each-tree-row/
 
+Given the root of a binary tree,
+return an array of the largest value in each row of the tree.
+"""
+
+from __future__ import annotations
 from collections import deque
 
 
 class TreeNode:
-    def __init__(self, val, left, right):
+    def __init__(
+        self, val: int, left: TreeNode | None = None, right: TreeNode | None = None
+    ):
         self.val = val
         self.left = left
         self.right = right
 
 
-def largest_values(root: TreeNode) -> list[int]:
+def largest_values(root: TreeNode | None) -> list[int]:
     if not root:
         return []
 
-    result = []
-    queue = deque([root])
+    result: list[int] = []
+    queue: deque[TreeNode] = deque([root])
 
-    while len(queue) > 0:
+    while queue:
         current_length = len(queue)  # number of nodes in the current level
         current_max = float("-inf")  # maximum value of the current level
 
@@ -36,11 +43,10 @@ def largest_values(root: TreeNode) -> list[int]:
     return result
 
 
-# ===== Analyze =====
-#
-# Time complexity: O(n)
-# - we visit each node only once, and O(1) work is done at each node
-#
-# Space complexity: O(n)
-# - if the binary tree is 'perfect', the last level contains n/2 nodes
-# -> the queue could hold up to O(n) nodes
+"""
+Complexity:
+- Let n = number of nodes
+
+1. Time complexity: O(n) (each node is processed once)
+2. Space complexity: O(n) for the queue
+"""

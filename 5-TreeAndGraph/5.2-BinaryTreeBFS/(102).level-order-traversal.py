@@ -54,8 +54,7 @@ Complexity:
 
 1. Time complexity: O(n) (each node is processed once)
 2. Space complexity: O(n) for the queue
-   (example: a perfect binary tree can contain (n + 1) / 2 nodes
-    at the last level)
+   (example: a perfect binary tree has (n + 1) / 2 nodes at last level)
 """
 
 
