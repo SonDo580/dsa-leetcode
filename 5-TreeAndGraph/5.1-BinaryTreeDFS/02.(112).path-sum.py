@@ -22,7 +22,7 @@ class TreeNode:
 def has_path_sum_recursive(root: TreeNode | None, target_sum: int) -> bool:
     def dfs(node: TreeNode | None, current_sum: int) -> bool:
         """
-        Return True if any path from node has sum = target_sum.
+        Return True if any path through node has sum = target_sum.
         Path from root to node's parent has sum = current_sum
         """
         if not node:
@@ -30,11 +30,11 @@ def has_path_sum_recursive(root: TreeNode | None, target_sum: int) -> bool:
 
         current_sum += node.val
 
-        # Check sum if node is a leaf
+        # node is a leaf -> check if path sum == target_sum
         if not node.left and not node.right:
             return current_sum == target_sum
 
-        # Return True if any path has sum == target_sum
+        # Return True if any path through node has sum == target_sum
         return dfs(node.left, current_sum) or dfs(node.right, current_sum)
 
     return dfs(root, 0)
