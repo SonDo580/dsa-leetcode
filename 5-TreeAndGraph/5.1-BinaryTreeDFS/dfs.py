@@ -126,6 +126,44 @@ Complexity:
 """
 
 
+def in_order_dfs_iter_v2(root: TreeNode | None) -> list[int]:
+    if not root:
+        return []
+
+    vals: list[int] = []
+    stack: list[TreeNode] = []
+    current: TreeNode | None = root
+
+    while stack or current:
+        if current:
+            # push 'current' to stack to process later
+            # (after processing all nodes in 'current.left')
+            stack.append(current)
+
+            # go as left as possible
+            current = current.left
+        else:
+            # get past a leaf -> backtrack to start processing
+
+            # get next ancestor to process
+            current = stack.pop()
+
+            # process node
+            vals.append(current.val)
+
+            # explore right subtree
+            current = current.right
+
+    return vals
+
+
+"""
+Complexity:
+1. Time complexity: O(n)
+2. Space complexity: O(h) for the stack
+"""
+
+
 # ===== Post-order =====
 # https://leetcode.com/problems/binary-tree-postorder-traversal/
 
@@ -174,6 +212,44 @@ def post_order_dfs_iter(root: TreeNode | None) -> list[int]:
             stack.append((node.right, False))
         if node.left:
             stack.append((node.left, False))
+
+    return vals
+
+
+def post_order_dfs_iter_v2(root: TreeNode | None) -> list[int]:
+    if not root:
+        return []
+
+    vals: list[int] = []
+    stack: list[TreeNode] = []
+    current: TreeNode | None = root
+    last_processed: TreeNode | None = None
+
+    while stack or current:
+        if current:
+            # push 'current' to stack to process later
+            # (after processing all nodes in 'current.left')
+            stack.append(current)
+
+            # go as left as possible
+            current = current.left
+        else:
+            # get past a leaf
+            # OR fully explored a subtree (processed subtree root in previous iteration)
+            # -> backtrack
+
+            # peek the parent
+            node = stack[-1]
+
+            if node.right and last_processed != node.right:
+                # explore right subtree before processing node
+                current = node.right
+            else:
+                # process the node
+                stack.pop()
+                vals.append(node.val)
+                last_processed = node
+                # keep current=None to continue backtracking in next iteration
 
     return vals
 
