@@ -48,6 +48,15 @@ class TreeNode:
 - post-order (DFS): left -> right -> node
 - level-order (BFS)
 
+## DFS stack
+
+- recursive approach: O(h)
+  - worst case: degenerate tree -> O(n)
+  - best case: balanced tree -> O(log(n))
+
+- iterative approach: O(h)
+  - best case: degenerate tree -> O(1) (pop 1 and add 1 each time)
+
 # Binary search tree
 
 ## Property
