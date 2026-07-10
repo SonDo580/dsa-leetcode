@@ -38,7 +38,7 @@ class UnionFind:
         return self.ancestor[x]
 
     def union(self, x: int, y: int) -> bool:
-        """Add edge (x, y). Return True if 2 component trees are connected."""
+        """Add edge (x, y). Return True if 2 component trees are merged."""
         root_x = self.find(x)
         root_y = self.find(y)
         if root_x == root_y:

@@ -10,8 +10,10 @@ Approaches:
   -> Use the `disjoin set` (`union-find`) data structure.
 
 Main idea:
-- Have all directly or indirectly connected vertices share the same root node.
+- Use "just enough" edges such that all nodes the same connected component
+  are still connected
   -> Each connected component forms a tree.
+  -> All directly or indirectly connected vertices share a root node.
 - Important functions:
   . find: find root of the connected component a vertex belongs to.
   . union: connect 2 connected components by giving them the same root.
