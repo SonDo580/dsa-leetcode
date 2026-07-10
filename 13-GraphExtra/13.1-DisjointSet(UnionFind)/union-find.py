@@ -5,37 +5,27 @@ Approaches:
 - If the graph is static, we can perform DFS/BFS from 1 vertex and see
   if we can reach the other vertex (see Graph DFS/BFS section).
   . Time complexity: O(V + E)
-    . each node is processed once.
-    . adjacent edges of a node is checked once or twice.
   . Space complexity: O(V)
-    . BFS: the queue stores all nodes at the current level.
-    . DFS: the stack only stores nodes on the current path,
-           but worst case is still O(V) for highly skewed graph.
 - If edges are added dynamically, DFS/BFS every time is costly.
-  We can use the `disjoin set` (`union-find`) data structure.
+  -> Use the `disjoin set` (`union-find`) data structure.
 
 Main idea:
-- Have all (directly or indirectly) connected vertices share the same root node.
+- Have all directly or indirectly connected vertices share the same root node.
   -> Each connected component forms a tree.
 - Important functions:
-  . find: find the root node of a vertex.
+  . find: find root of the connected component a vertex belongs to.
   . union: connect 2 connected components by giving them the same root.
            (perform when adding an edge)
-  . connected: 2 vertices are connected if they share the root.
+  . connected: 2 vertices are connected if they share the same root.
 """
 
-# ===== Basic (Quick Union) =====
-# ===============================
+# ===== Quick Union =====
+# =======================
 """
 - Use a `parent` array to store parent of each node.
-- Initial state: all nodes are not connected -> parent[node] = node
-- find(x): traverse from x up to root (parent[root] = root)
-- union(x, y):
-  + normal: make x parent of y (or vice versa).
-    . if y is not the root, we have to reverse some edges in y's component.
-  + quick union: connect the root of y to the root of x (or vice versa).
-    . this reduces the height of the resulting tree,
-      and keep all edges intact.
+- Initial state: All nodes are not connected -> parent[node] = node
+- find(x): Traverse from x to find root (parent[root] = root).
+- union(x, y): Connect root of y to root of x (or vice versa).
 """
 
 
@@ -109,7 +99,7 @@ class UnionFind:
 1. Time complexity:
 - constructor: O(n) to init `root` array.
 - find: O(1).
-- union: O(n) since we have to traverse through `root`.
+- union: O(n) (traverse through `root`).
 - connected: O(find).
 
 2. Space complexity: O(n) for `root` array.
@@ -183,11 +173,12 @@ Extra: Why h -> O(log(n))?
    . h <= log2(n)
 """
 
-# ===== Path compression (optimize `find`) =======
-# ================================================
+# ===== Path compression (optimize `find` for Quick Union) =======
+# ================================================================
 """
 - Quick Union implementation:
-  . From a node, we need to traverse `parent` until we reach the root.
+  . To find root, we need to traverse from a node along `parent` 
+    until we reach the root.
   . If we search root for the same node again (or a node below it in the tree),
     that operation is repeated.
 -> Optimize:
@@ -205,7 +196,10 @@ class UnionFind:
     def find(self, x: int) -> int:
         if x == self.ancestor[x]:
             return x
+
+        # record root for all nodes on path when recursion stack unwinds
         self.ancestor[x] = self.find(self.ancestor[x])
+
         return self.ancestor[x]
 
     def union(self, x: int, y: int) -> None:
@@ -222,24 +216,18 @@ class UnionFind:
 1. Time complexity:
 - constructor: O(n) to init `ancestor` array.
 - find: 
-  + worst case: O(h) -> O(n)
-  + best case: O(1) (if the root has been recorded, we can jump to it)
-  + average: O(log(n))
+  . worst case: O(n)
+  . average: O(log(n))
+  . best case: O(1) (if the root has been recorded)
 - union: O(find).
 - connected: O(find).
 
 2. Space complexity: O(n) for `ancestor` array.
-
-Extra:
-[Top-Down Analysis of Path Compression]
-(https://www.cs.tau.ac.il/~michas/ufind.pdf)
 """
 
 
 # ===== Path compression + Union by rank =======
 # ==============================================
-
-
 class UnionFind:
     def __init__(self, n: int):
         self.ancestor: list[int] = [i for i in range(n)]
@@ -252,7 +240,7 @@ class UnionFind:
         return self.ancestor[x]
 
     # without recursion
-    def find(self, x: int) -> int:
+    def __find(self, x: int) -> int:
         # Find root first
         curr = x
         while curr != self.ancestor[curr]:
@@ -288,13 +276,13 @@ class UnionFind:
 """
 1. Time complexity:
 - constructor: O(n) to init `ancestor` and `height` arrays.
-- find: O(alpha(n)) on average (~ O(1))
+- find: O(alpha(n)) on average
+  . `alpha` is the Inverse Ackermann function, which grows very slowly
+    -> can be considered O(1)
 - union: O(find).
 - connected: O(find).
 
 2. Space complexity: O(n) for `ancestor` and `height` arrays.
-
-Extra: `alpha` is the Inverse Ackermann function, which grows very slowly.
 """
 
 
@@ -302,11 +290,9 @@ Extra: `alpha` is the Inverse Ackermann function, which grows very slowly.
 # ========================
 """
 - UnionFind can be used to detect cycle in undirected graph.
-- The graph has cycle if:
-  . find(x) and find(y) lead to the same root.
-  -> x and y are already in the same tree.
-  -> the "obvious" cycle: x -...- root -...- y
-                          |__________________|
-- Application: 
+- When adding edge (x, y), find(x) and find(y) lead to the same root.
+  -> x and y are already connected on a path through root.
+  -> adding another edge between them forms a cycle.
+- Application:
   . used in Kruskal's algorithm for finding minimum spanning tree.
 """
