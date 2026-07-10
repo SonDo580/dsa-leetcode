@@ -18,14 +18,14 @@ If there is no such earliest time, return -1.
 Analysis:
 - Each person represents a node in a graph.
   A friendship represents a bidirectional edge.
-- . person a becomes acquainted with person b
-    <=> node a and node b are in the same connected component.
-  . every person became acquainted with every other person
-    <=> the number of connected components reduced to 1.
-    
-Solution: use UnionFind
+- person a is acquainted with person b
+  <-> node a and node b are in the same connected component.
+  
+Idea: use UnionFind
 - Initially, the number of connected components is count = n.
 - `count` is decrement every time we perform `union`.
+- every person became acquainted with every other person
+  <-> the number of connected components reduced to 1.
 - Since we need to find the earliest time,
   sort the logs in increasing order of timestamp.
 """
@@ -60,26 +60,26 @@ class UnionFind:
 
 
 def earliest_acquainted(logs: list[tuple[int, int, int]], n: int) -> int:
-    logs.sort(key=lambda log: log[0])
+    logs.sort(key=lambda log: log[0])  # increasing time
     uf = UnionFind(n)
     for timestamp, person_1, person_2 in logs:
         uf.union(person_1, person_2)
         if uf.count == 1:
             return timestamp
-    return timestamp if uf.count == 1 else -1
+    return -1
 
 
 """
 Complexity:
-- Let m = len(logs)
-      n = number of people 
+- Number of nodes (people): n 
+  Number of edges (friendships): E = len(logs)
 
-1. Time complexity: O(m * log(m))
-- Sort 'logs': O(m * log(m))
-- Loop through 'logs': O(m)
-  . 'union' takes O(alpha(n)) ~ O(1)
+1. Time complexity: O(E*log(E) + E) = O(E*log(E))
+- Sort 'logs': O(E * log(E))
+- Iterate through 'logs': O(E)
+  . 'union' takes O(alpha(n)) ~~ O(1)
 
-2. Space complexity: O(m + n)
-- Sort 'logs': O(m)
-- UnionFind: O(n)
+2. Space complexity: O(n + E)
+- Sort 'logs': O(E) (timsort)
+- UnionFind: O(n) for 'ancestor' and 'height'
 """

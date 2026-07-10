@@ -17,10 +17,10 @@ Analysis:
 - The locations of the stones form a graph:
   . each location is a node.
   . 2 nodes are connected if their x or y coordinates are equal.
-    the edge is bidirectional.
+  . the edges are bidirectional.
 - We need to find the number of connected components.
   Remove stones until each component has only 1 stone remain.
-  -> largest number of stone that can be removed: n - count
+  -> largest number of stone that can be removed: n - num_connected_components
 """
 
 # ===== Approach 1: DFS/BFS =====
@@ -30,7 +30,7 @@ Analysis:
   For each node, check all other nodes for connectivity
   and build a bidirectional edge.
 - Perform DFS/BFS from each node
-- Start a new connected component if a node haven't been visited 
+- Start a new connected component if a node hasn't been visited 
   in the previous traversal.
 """
 
@@ -74,39 +74,35 @@ def remove_stones(stones: list[tuple[int, int]]) -> int:
 Complexity:
 - Let N = len(stones) = number of nodes
       E = number of edges
+      . worst case: each node is connected to every other node
+                    (all stones are on the same line)
+    -> E = (N - 1) + (N - 2) + ... + 2 + 1 = N * (N - 1) / 2 = O(N^2)
 
-1. Time complexity: O(N^2)
+1. Time complexity: O(N^2 + N + E) = O(N^2)
 - Build `graph`: O(N^2)
 - Graph traversal: O(N + E)
   . each node is processed once, each edge is checked twice.
-  . worst case: each node is connected to every other node
-                (all stones are on the same line)
-    -> E = (N - 1) + (N - 2) + ... + 2 + 1 = N * (N - 1) / 2 
-=> Overall: O(N^2)
-
-2. Space complexity:
-- `graph`: O(E) -> O(N^2)
-- `seen` set: O(N)
+  
+2. Space complexity: O(N + E)
+- `graph`: O(E)
+- `seen`: O(N)
 - stack: O(N)
-
-Extra: space for stack - worst case 
-- Iterative approach: when all nodes are connected to each other.
-  . we start from 1 node, then add all N - 1 neighbors to the stack.
-- Recursive approach: when the graph degenerates to a linked-list.
-  . max recursion depth is N.
+  . Worst case: 
+    . Iterative approach: when all nodes are connected to each other.
+      -> we start from 1 node, then add all N - 1 neighbors to the stack.
+    . Recursive approach: when the graph degenerates to a linked-list.
+      -> max recursion depth is N.
 """
 
 
 # ===== Approach 2: Union-Find =====
 # ==================================
 """
-- Use a variable `count`:
-  . Init count = n (number of stones).
-  . Loop through the edges and perform `union`,
-    decrement `count` for every `union`.
-  . Note that we don't need to collect edges in advance.
-- Another way is to count the number of root at the end,
-  without using the extra variable `count`.
+- Iterate through edges and perform `union`.
+  At the end, count the number of roots.
+- Optimize: Track number of connected components
+  . Initially count = n (n nodes, 0 edges).
+  . Decrement `count` for every successful `union`.
 """
 
 
@@ -135,7 +131,7 @@ class UnionFind:
         else:
             self.ancestor[root_y] = root_x
             self.height[root_x] += 1
-        self.count -= 1  # decrement the number of connected components
+        self.count -= 1
 
 
 def remove_stones(stones: list[tuple[int, int]]) -> int:
@@ -147,13 +143,13 @@ def remove_stones(stones: list[tuple[int, int]]) -> int:
                 uf.union(i, j)
     return n - uf.count
 
+
 """
 Complexity:
 
 1. Time complexity: O(N^2)
-- number of iterations: O(N^2)
-- `union`: O(alpha(n)) ~ O(1)
-=> Overall: O(N^2 * 1) = O(N^2)
+- Number of iterations: O(N^2)
+- `union`: O(alpha(n)) ~~ O(1)
 
-2. Space complexity: O(N)
+2. Space complexity: O(N) for 'uf'
 """
