@@ -17,6 +17,9 @@ Main idea:
   . union: connect 2 connected components by giving them the same root.
            (perform when adding an edge)
   . connected: 2 vertices are connected if they share the same root.
+
+Limitation:
+- UnionFind only works on undirected graph.
 """
 
 # ===== Quick Union =====
