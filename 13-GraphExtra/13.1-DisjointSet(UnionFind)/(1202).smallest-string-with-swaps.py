@@ -103,6 +103,7 @@ Complexity:
 
 1. Time complexity: O(n + E + n*log(n)) = O(n*log(n) + E)
 - Build 'graph': O(E)
+- Init 'result': O(n)
 - DFS (total): O(n + E)
 - Sort 'indices' and 'chars': O(n*log(n))
   (worst case: all nodes are in the same connected component)
@@ -113,6 +114,116 @@ Complexity:
 - 'graph': O(n + E)
 - 'visited': O(n)
 - DFS stack: O(n)
+- 'indices', 'chars': O(n)
 - Sorting: O(n) (timsort)
 - 'result': O(n)
+"""
+
+# === Approach 2: UnionFind ===
+"""
+- Iterate through edges ('pairs') and perform union operation
+- Group nodes in the same connected component:
+  . Iterate through uf.ancestor.
+  . Perform find(x) for each node (fix if root is stale after union).
+  . Group (node + character)s with the same root.
+- Build result string and process each connected component:
+  . Same as approach 1.
+"""
+
+
+class UnionFind:
+    """Implement path compression and union by rank."""
+
+    def __init__(self):
+        # root of connected component tree each node is in
+        # . can be stale after union() -> fix when find()
+        self.ancestor: dict[int, int] = {}
+
+        # subtree height
+        self.height: dict[int, int] = {}
+
+    def find(self, x: int) -> int:
+        """Return root of connected component tree that x is in."""
+        if x != self.ancestor[x]:
+            # update root for all ancestors on the chain
+            # when recursion stack unwinds
+            self.ancestor[x] = self.find(self.ancestor[x])
+        return self.ancestor[x]
+
+    def union(self, x: int, y: int) -> None:
+        """Add edge (x, y). May merge 2 component trees."""
+        for node in [x, y]:
+            if node not in self.ancestor:
+                self.ancestor[node] = node
+                self.height[node] = 0
+
+        root_x = self.find(x)
+        root_y = self.find(y)
+        if root_x == root_y:
+            return
+
+        # union by rank: minimize merged tree height
+        if self.height[root_x] > self.height[root_y]:
+            self.ancestor[root_y] = root_x
+        elif self.height[root_x] < self.height[root_y]:
+            self.ancestor[root_x] = root_y
+        else:
+            self.ancestor[root_y] = root_x
+            self.height[root_x] += 1
+
+
+def smallest_string_with_swaps(s: str, pairs: list[list[int]]) -> str:
+    uf = UnionFind()
+    for x, y in pairs:
+        uf.union(x, y)
+
+    # map component tree root -> list of indices & list of characters
+    components: dict[int, tuple[list[int], list[str]]] = {}
+    for node in uf.ancestor:
+        root = uf.find(node)  # fix possibly stale root
+        if root not in components:
+            components[root] = ([], [])
+        components[root][0].append(node)  # index in s
+        components[root][1].append(s[node])  # character
+
+    # characters of result string
+    # - keep characters intact at non-swappable indices
+    result = list(s)
+
+    # Sort each entry and build result
+    for indices, chars in components.values():
+        indices.sort()
+        chars.sort()
+
+        # Put characters in lexicographically increasing order
+        # at indices of the connected component
+        for i in range(len(indices)):
+            result[indices[i]] = chars[i]
+
+    return "".join(result)
+
+
+"""
+Complexity:
+- Let n = len(s)
+- Number of nodes: N = O(n)
+  Number of edges: E = len(pairs)
+  . worst case: E = O(n^2) (every node is connected to every other node)
+
+1. Time complexity: O(E + N + n + n*log(n)) = O(n*log(n) + E)
+- Iterate through E edges:
+  . each union(): ~~O(1)
+- Iterate through N nodes in uf.ancestor:
+  . each find(): ~~O(1)
+- Init result characters array: O(n)
+- Sort 'indices' and 'chars': O(n*log(n))
+  (worst case: all nodes are in the same connected component)
+- Fill result characters array: O(n)
+- Produce result string: O(n)
+
+2. Space complexity: O(N + n) = O(n)
+- 'uf': O(N)
+- 'components': O(N)
+- 'result' (characters array): O(n)
+- Sorting: O(N) (timsort)
 """
