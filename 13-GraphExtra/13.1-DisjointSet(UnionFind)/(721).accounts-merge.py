@@ -108,19 +108,19 @@ def accounts_merge(accounts: list[list[str]]) -> list[list[str]]:
 Complexity:
 - Let k = len(accounts), l = average len(account[i])
 - Number of nodes: N = number of unique emails = O(k*l)
-  Number of (reduced) edges: E = k * (l - 2) = O(k*l) = O(N)
+  Number of (reduced) edges: E = k * (l - 2) = O(k*l)
 
-1. Time complexity: O(N + E + N*log(N)) = O(N*log(N))
+1. Time complexity: O(N + E + N*log(N)) = O(k*l*log(k*l))
 - Build adjacency list: O(E)
 - DFS across k iterations: O(N + E)
   . visit each node once, each edge twice.
-- Sorting: O(N*log(N))
+- Sorting + array concatenation: O(N*log(N) + N) = O(N*log(N))
 
-2. Space complexity: O(k + N + E) = O(N)
+2. Space complexity: O(k + N + E) = O(k*l)
 - 'graph': O(k + E)
 - 'email_to_name': O(k)
 - 'visited': O(N)
-- sorting: O(N)
+- Sorting: O(N) (timsort)
 - DFS recursion stack: O(N)
 
 === Sorting worst case: when all emails are by the same person ===
@@ -129,4 +129,126 @@ Proof: n1 + n2 = n -> n1*log(n1) + n2*log(n2) < n*log(n)
   n1*(log(n1)/log(n)) + n2*(log(n2)/log(n)) < n
 . n1 < n, n2 < n -> log(n1)/log(n) < 1, log(n2)/log(n) < 1
   -> n1*(log(n1)/log(n)) + n2*(log(n2)/log(n)) < n1 + n2 = n
+"""
+
+
+# === Approach 2: UnionFind ===
+"""
+Idea:
+- Similar to approach 1, only consider the reduced set of edges
+  (for each account entry: 1 edge from 1st email to each other email).
+- Implementation note:
+  . Use hashmap for internal data structures of UnionFind.
+- Iterate through edges and and perform union operations.
+- Group emails at the end:
+  . Iterate through each entry of uf.ancestor.
+  . Perform find(key) to get correct root (can be stale after an union).
+  . Keys (emails) with the same root form a connected component.
+- To find name for each connected component,
+  choose the root in each component tree to map name to.
+  -> For a root to be the 1st email of 1 account entry,
+     when performing union:
+     . If height[x] == height[y], must choose x to be the root.
+       Since for the same account entry: x is 1st email, y is another email.
+     . It doesn't matter when merging 2 different account entries (height[x] == height[y]),
+       since the root will be among the 2 1st emails -> use the same logic.
+- For account entry with 1 email, there're no edges to add.
+  But we still need the node to exists in uf.ancestor
+  -> Perform union for the 1st email with itself.
+"""
+
+
+class UnionFind:
+    """Implement path compression and union by rank."""
+
+    def __init__(self):
+        # root of component tree each node is in
+        # (can become stale after an union)
+        self.ancestor: dict[str, str] = {}
+
+        # height of each subtree
+        self.height: dict[str, int] = {}
+
+    def find(self, x: str) -> str:
+        """Find root of connected component tree that x is in."""
+        if x != self.ancestor[x]:
+            # record roots for ancestor on the chain
+            # when recursion stack unwinds
+            self.ancestor[x] = self.find(self.ancestor[x])
+        return self.ancestor[x]
+
+    def union(self, x: str, y: str) -> None:
+        """Add edge (x, y). May merge 2 connected components."""
+        if x not in self.ancestor:
+            self.ancestor[x] = x
+            self.height[x] = 0
+        if y not in self.ancestor:
+            self.ancestor[y] = y
+            self.height[y] = 0
+
+        root_x = self.find(x)
+        root_y = self.find(y)
+        if root_x == root_y:
+            return
+
+        if self.height[root_x] > self.height[root_y]:
+            self.ancestor[root_y] = root_x
+        elif self.height[root_x] < self.height[root_y]:
+            self.ancestor[root_x] = root_y
+        else:
+            # Important: must choose root_x as new root
+            self.ancestor[root_y] = root_x
+            self.height[root_x] += 1
+
+
+def accounts_merge(accounts: list[list[str]]) -> list[list[str]]:
+    uf = UnionFind()
+
+    # map 1st email of each account entry to person name
+    email_to_name: dict[str, str] = {}
+
+    for account in accounts:
+        name = account[0]
+        first_email = account[1]
+        email_to_name[first_email] = name
+
+        # include first_email itself
+        for i in range(1, len(account)):
+            uf.union(first_email, account[i])
+
+    # group emails with the same root
+    components: defaultdict[str, list[str]] = defaultdict(list)
+    for email in uf.ancestor:
+        root = uf.find(email)  # fix possibly stale root
+        components[root].append(email)
+
+    # sort emails in each group and produce result
+    merged_accounts: list[list[str]] = []
+    for root in components:
+        name = email_to_name[root] # root is a 1st email
+        components[root].sort()
+        merged_accounts.append([name] + components[root])
+
+    return merged_accounts
+
+
+"""
+Complexity:
+- Let k = len(accounts), l = average len(account[i])
+- Number of nodes: N = number of unique emails = O(k*l)
+  Number of (reduced) edges: E = O(k*l)
+
+1. Time complexity: O(E + N + N*log(N)) = O(k*l*log(k*l))
+- Iterate through E edges (nested loop): O(E)
+  . each union(): ~~O(1)
+- Iterate through uf.ancestor to group emails: O(N)
+  . each find(): ~~O(1)
+- Sorting + array concatenation: O(N*log(N) + N) = O(N*log(N))
+  . worst case: all emails are of the same person
+
+2. Space complexity: O(N + k) = O(k*l)
+- 'uf': O(N)
+- 'email_to_name': O(k)
+- 'components': O(N) 
+- Sorting: O(N) (timsort)
 """
