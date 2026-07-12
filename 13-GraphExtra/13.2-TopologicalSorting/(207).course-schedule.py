@@ -19,23 +19,23 @@ Topological sorting:
 # ===== BFS approach (Kahn's Algorithm) =====
 # ===========================================
 """
+Idea:
 - Study a course with no prerequisites first.
 - Remove it from prerequisites of other courses.
 - Repeat until all courses are studied.
-<=>
-- Add vertices with in-degree 0 to a queue.
-- Dequeue and add vertex to result (increment count in this problem).
-  Decrement the in-degree of vertices that current vertex points to.
-- Repeat until all vertices are processed.
-- Cycle detection: 
-  . At any given time, there're no vertices with in-degree 0 
-    -> cannot proceed.
-  . In our implementation, the queue will become empty,
-    but number of vertices processed haven't reached 'numCourses'.
 
-Implementation notes:
-- Use an array 'in_degree' to track in-degree of vertices.
-- Build the graph as adjacency list to look up neighbors quickly.
+Implementation (BFS):
+- BFS from vertices with in-degree 0.
+- Dequeue and process each vertex.
+  Decrement the in-degree of vertices that current vertex points to.
+  Add vertices whose in-degree have reduced to 0 to the queue. 
+  Repeat until all vertices are processed.
+- Cycle detection:
+  . There are vertices that haven't been processed, 
+    but no ones with in-degree 0 -> cannot proceed.
+- Notes:
+  . Build adjacency list to look up neighbors quickly.
+  . Use an array 'in_degree' to track in-degree of vertices.
 """
 
 from collections import defaultdict, deque
@@ -72,12 +72,13 @@ Complexity:
       E = len(prerequisites)  (number of edges)
 
 1. Time complexity: O(V + E)
-- Build 'graph' and 'in-degree': O(E)
+- Init 'in-degree': O(V)
+- Build 'graph' and fill 'in-degree': O(E)
 - Find starters (in-degree 0): O(V)
-- BFS: O(V + E)
+- BFS: O(V + E) (visit each vertex/edge once)
 
 2. Space complexity: O(V + E)
+- 'graph' (adjacency list): O(V + E)
 - 'in_degree': O(V)
-- 'graph': O(E)
 - queue: O(V)
 """
