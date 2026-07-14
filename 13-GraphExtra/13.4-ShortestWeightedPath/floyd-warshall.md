@@ -1,6 +1,6 @@
 # Description
 
-- Floyd-Warshall algorithm is used to find the shortest distance between all pair of nodes in a directed graph without negative-weight cycles.
+- Floyd-Warshall algorithm is used to find the shortest distance between all pairs of nodes in a directed graph without negative-weight cycles.
 
 # Theorem
 
@@ -10,16 +10,16 @@
 
 **1. DP**
 
-- Let dp[k][i][j] be the shortest distance from vertex i to vertex j, using only the first k vertices (the set {0, ..., k - 1}) as intermediate points. Note that i, j does not have to be in the set of intermediate points; and the vertices are zero-indexed.
-- Range of k: [0, V]
+- Let dp[k][i][j] be the shortest distance from vertex i to vertex j, using only the first k vertices (indices 0 to k-1) as intermediate points. Note that i, j does not have to be in the set of intermediate points.
+- Range of k: [0..V-1]
   - At most V vertices (all vertices) are on the shortest path, each encountered once. See `Theorem 2`.
 - Base case: k = 0 (only direct edges and self-entries)
   - dp[0][i][i] = 0
-  - dp[0][i][j] = w_ij if the edge exists, infinity otherwise
-- To find the shortest path from i to j using only the first k vertices, we have 2 choices:
-  - Exclude (k - 1)th vertex: the shortest path already found using only the first (k - 1) vertices.
-  - Include (k - 1)th vertex: the shortest path from i to k PLUS the shortest path from k to j, both using only the first (k - 1) vertices.
-- Formula: dp[k][i][j] = min(dp[k-1][i][j], dp[k-1][i][k-1] + dp[k-1][k-1][j])
+  - dp[0][i][j] = edge_exists ? w_ij : infinity
+- To find the shortest path from i to j using only the first k vertices (indices 0 to k-1), we have 2 choices:
+  - Exclude (k-1)th vertex: the shortest path found using only the first k-1 vertices (indices 0 to k-2).
+  - Include (k-1)th vertex: combine the shortest path from i to (k-1)th vertex and the shortest path from (k-1)th vertex to j, both using only the first k-1 vertices (indices 0 to k-2).
+- Recurrence formula: dp[k][i][j] = min(dp[k-1][i][j], dp[k-1][i][k-1] + dp[k-1][k-1][j])
 
 - **Pseudocode:**
 
@@ -32,7 +32,7 @@ for u, v, w_uv in edges:
     dp[0][u][v] = w_uv
 
 # allow the first k vertices as intermediate points
-for k in range(1, V + 1): # k = 1 -> k = V
+for k in range(1, V + 1): # k = [1..V]
     for i in range(V):
         for j in range(V):
             dp[k][i][j] = min(dp[k-1][i][j], dp[k-1][i][k-1] + dp[k-1][k-1][j])
@@ -66,7 +66,7 @@ for u, v, w_uv in edges:
     dp[u][v] = w_uv
 
 # allow the first k vertices as intermediate points
-for k in range(1, V + 1): # k = 1 -> k = V
+for k in range(1, V + 1): # k = [1..V]
     next_dp = [[inf] * V for _ in range(V)]
     for i in range(V):
         for j in range(V):
@@ -89,12 +89,13 @@ Space complexity: O(V^2) for 'dp' and 'next_dp'
 
 - Use a single V x V matrix and modify it in-place.
 - Let's analyze:
-
   - Formula: d[i][j] = min(d[i][j], d[i][k-1] + d[k-1][j])
-  - Formula to update d[i][k-1]: min(d[i][k-1], d[i][k-1] + d[k-1][k-1]) = d[i][k - 1] since d[k-1][k-1] is always 0.
-  - Similar for d[k-1][j].
-  - We can see that during the kth iteration _(add the (k - 1)th vertex as an intermediate point)_, d[i][k-1] and d[k-1][j] remains exactly the same as the (k - 1)th iteration.
-  - Thus the in-place update is "safe". This behavior is different from Bellman-Ford (2.2), where the in-place update can "look ahead".
+  - For j = k-1: 
+    d[i][k-1] = min(d[i][k-1], d[i][k-1] + d[k-1][k-1]) = d[i][k - 1]
+  - For i = k-1: 
+    d[k-1][j] = min(d[k-1][j], d[k-1][k-1] + d[k-1][j]) = d[k-1][j]
+  - We can see that during the kth iteration, d[i][k-1] and d[k-1][j] remains exactly the same as the (k - 1)th iteration.
+  - Thus the in-place update is safe. This behavior is different from Bellman-Ford (2.2), where the in-place update can "look ahead".
 
 - **Pseudocode:**
 
@@ -107,7 +108,7 @@ for i in range(V):
 for u, v, w_uv in edges:
     d[u][v] = w_uv
 
-for k in range(1, V + 1): # k = 1 -> k = V
+for k in range(1, V + 1): # k = [1..V]
     for i in range(V):
         for j in range(V):
             d[i][j] = min(d[i][j], d[i][k-1] + d[k-1][j])
@@ -123,7 +124,9 @@ for i in range(V):
 for u, v, w_uv in edges:
     d[u][v] = w_uv
 
-for k in range(V): # loop from 0 to V - 1 instead of 1 to V
+# k represents the max vertex in the set of intermediate vertices
+# not the number of intermediate vertices
+for k in range(V): # k = [0..V - 1] instead of [1..V]
     for i in range(V):
         for j in range(V):
             # use d[i][k] and d[k][j] instead of d[i][k-1] and d[k-1][j]
