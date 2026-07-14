@@ -28,11 +28,11 @@ class UnionFind:
     """Union-Find with path compression and union by rank."""
 
     def __init__(self, n: int):
-        # store the root of the component tree each node is in.
-        # can be stale after an union, so let's call it 'ancestor'.
+        # store the root of the component tree each node is in
+        # (can be stale after an union).
         self.ancestor: list[int] = [i for i in range(n)]
 
-        # the height of each subtree at node.
+        # the height of each subtree
         self.height: list[int] = [0] * n
 
     def find(self, x: int) -> int:
@@ -101,19 +101,21 @@ def min_cost_connect_points(points: list[tuple[int, int]]) -> int:
 Complexity:
 - Let N = len(points)   (number of nodes)
 - Each point is connected to all other points.
-  -> number of edges: E = N - 1 + N - 2 + ... + 1 = N * (N - 1) / 2
+  -> number of edges: E = N-1 + N-2 + ... + 1 = N*(N-1)/2
 
-1. Time complexity: O(N^2 + E*log(E)) = O(N^2 * log(N))
+1. Time complexity: O(N^2 + E*log(E) + E) = O(N^2 * log(N))
 - Produce 'edges': O(N^2).
-- Sort 'edges': O(E*log(E)) = O(N^2 * log(N^2)) = O(N^2 * 2*log(N)) = O(N^2 * log(N))
-- Build minimum spanning tree: O(E) = O(N^2)
-  . the union takes O(alpha(N)) (practically O(1))
+- Sort 'edges': O(E*log(E))
+- Build minimum spanning tree: O(E)
+  . union() takes O(alpha(N)) (practically O(1))
     where alpha is the Inverse Ackermann function.
 
 2. Space complexity: O(N + E) = O(N^2)
-- 'edges': O(E) = O(N^2)
+- 'edges': O(E)
+- Sort 'edges': O(E) (timsort)
 - UnionFind: O(N) for 'ancestor' and 'height'
 """
+
 
 # ===== Prim's algorithm =====
 # ============================
@@ -139,10 +141,10 @@ def min_cost_connect_points(points: list[tuple[int, int]]) -> int:
 
     # min heap storing (weight, vertex)
     # for selecting next minimum weight edge in the cut-set
-    heap = []
-    
+    heap: list[tuple[int, int]] = []
+
     # Arbitrarily start from node 0
-    heapq.heappush(heap, (0, 0)) 
+    heapq.heappush(heap, (0, 0))
 
     while heap:
         w, u = heapq.heappop(heap)
@@ -162,22 +164,23 @@ def min_cost_connect_points(points: list[tuple[int, int]]) -> int:
             _, v = edge
             if not in_mst[v]:
                 heapq.heappush(heap, edge)
-                
+
     return total_w
+
 
 """
 Complexity:
 
-1. Time complexity: O(N^2 + E*log(E)) = O(N^2 * log(N))
+1. Time complexity: O(N^2 + N + E*log(E)) = O(N^2 * log(N))
 - Build 'graph': O(N^2).
 - Init 'in_mst': O(N).
-- Build minimum spanning tree: O(E * log(E)) = O(N^2 * log(N))
-  . heappush / heappop: O(log(E)) = O(log(N^2)) = O(log(N))
-  . number of heappush and heappop: O(E) = O(N^2)
-    (each edge is pushed once and popped once)
+- Build minimum spanning tree: O(E*log(E))
+  . heappush / heappop: O(log(E))
+  . number of heappush and heappop: O(E)
+    (each edge is pushed once and popped at most once)
 
 2. Space complexity: O(N + E) = O(N^2)
-- 'graph': O(E) = O(N^2)
+- 'graph': O(N + E)
 - 'in_mst': O(N)
-- heap: O(E) = O(N^2)
+- heap: O(E)
 """
