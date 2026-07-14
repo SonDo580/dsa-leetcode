@@ -5,14 +5,17 @@
 
 # Usage
 
-- If the graph has negative-weight cycles, there is no shortest path.
-- If the graph has no negative-weight cycles, and need to find the shortest distance between all vertices -> use Floyd-Warshall algorithm.
-- If the graph has no negative-weight cycles, and need to find the shortest distance from a source to other vertices -> use Bellman-Ford algorithm.
-- If the graph has no negative-weight edges, and need to find the shortest distance from a source to other vertices -> use Dijkstra's algorithm.
+- If the graph has negative-weight cycles, there is no shortest path
+- To **find the shortest distance between all pairs of vertices**:
+  - If the graph has no negative-weight **cycles** but has negative-weight **edges** -> use `Floyd-Warshall`.
+  - If the graph has no negative-weight **edges** -> run `Dijkstra` V times starting from each vertex _(or still use `Floyd-Warshall`, less effective)_.
+- To **find the shortest distance from a source to other vertices**:
+  - If the graph has no negative-weight **cycles** but has negative-weight **edges** -> use `Bellman-Ford`.
+  - If the graph has no negative-weight **edges** -> use `Dijkstra` _(or still use `Bellman-Ford`, less effective)_
 
 # Edge relaxation
 
-- A edge (u, v, w) can be relaxed if the distance to v can be shortened by going through u.
+- Apply when distance from source to v can be shortened by going through u.
 
 ```
 if dist[u] + weight(u, v) < dist[v]:
