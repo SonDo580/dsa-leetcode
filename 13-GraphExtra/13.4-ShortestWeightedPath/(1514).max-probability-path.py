@@ -66,7 +66,8 @@ def _dijkstra(
         if du < d[u]:
             continue
 
-        # allow du == du[u] to finalize d[u] once and process its neighbors
+        # d[u] has finalized,
+        # allow du == du[u] to process its neighbors (once)
 
         for w_uv, v in adj[u]:
             if du * w_uv > d[v]:
