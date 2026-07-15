@@ -2,7 +2,7 @@
 https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/
 
 There are n cities numbered from 0 to n-1.
-Given the array edges where edges[i] = [from_i, to_i, weight_i] represents
+Given the array 'edges' where edges[i] = [from_i, to_i, weight_i] represents
 a bidirectional and weighted edge between cities from_i and to_i,
 and given the integer 'distanceThreshold'.
 
@@ -18,9 +18,10 @@ is equal to the sum of the edges' weights along that path.
 Idea:
 - Find the shortest distance between all (i, j) pairs.
   Use Floyd-Warshall algorithm.
-- For each city, find the number reachable cities (d[i][j] < distanceThreshold)
+- If d[i][j] < distanceThreshold,
+  increase the number of reachable cities for both i and j.
 - Return the city with the minimum number of reachable cities.
-  Loop forward to get the city with greater number later.
+  Loop forward to get the city with greater number (label) later.
 """
 
 import math
@@ -32,10 +33,10 @@ def findTheCity(n: int, edges: list[list[int]], distance_threshold: int) -> int:
     for i in range(n):
         d[i][i] = 0
     for u, v, weight in edges:
-        # note that the edges are bidirectional
+        # the edges are bidirectional
         d[u][v] = weight
         d[v][u] = weight
-    for k in range(1, n + 1):
+    for k in range(n):
         for i in range(n):
             for j in range(n):
                 d[i][j] = min(d[i][j], d[i][k - 1] + d[k - 1][j])
@@ -48,7 +49,7 @@ def findTheCity(n: int, edges: list[list[int]], distance_threshold: int) -> int:
                 reachable[i] += 1
                 reachable[j] += 1
 
-    # Find greatest-number city with minimum number of reachable cities
+    # Find greatest-label city with minimum number of reachable cities
     min_reachable = math.inf
     city_with_min_reachable = -1
     for i in range(n):
@@ -58,6 +59,7 @@ def findTheCity(n: int, edges: list[list[int]], distance_threshold: int) -> int:
 
     return city_with_min_reachable
 
+
 """
 Complexity:
 - Let V = n             (number of vertices)
@@ -66,7 +68,7 @@ Complexity:
 1. Time complexity: O(V^3)
 - Floyd-Warshall: O(V^3)
 - Calculate 'reachable': O(V^2)
-- Find city with min_reachable: O(V) 
+- Find answer: O(V)
 
 2. Space complexity: O(V^2)
 - 'd': O(V^2)
