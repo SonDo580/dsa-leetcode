@@ -120,7 +120,8 @@ Space complexity: O(V + E)
 
 ## Consequence of limitation
 
-- The first time a node is popped from the min heap, its shortest distance from source is **finalized**.
+- The first time a node u is popped from the min heap, its shortest distance from source is **finalized**.
+  - Remaining items on heap have greater or equal path weight. If we go through those paths to reach u, the distance can only increase or stay the same, since we may go through extra non-negative edges.
 
 ## Examples without limitation
 
