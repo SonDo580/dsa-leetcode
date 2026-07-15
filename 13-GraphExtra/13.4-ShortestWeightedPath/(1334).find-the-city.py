@@ -63,7 +63,7 @@ def _floyd_warshall(n: int, edges: list[list[int]]) -> list[list[int | float]]:
     for k in range(n):
         for i in range(n):
             for j in range(n):
-                d[i][j] = min(d[i][j], d[i][k - 1] + d[k - 1][j])
+                d[i][j] = min(d[i][j], d[i][k] + d[k][j])
 
     return d
 
