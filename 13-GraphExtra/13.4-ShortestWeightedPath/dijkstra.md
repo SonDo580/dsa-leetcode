@@ -1,22 +1,21 @@
 # Description
 
-- Dijkstra's algorithm focuses on 1 source node, and will find the shortest distance to every other node in the graph from the source.
+- Dijkstra's algorithm finds the shortest distance from 1 source to every other node in a graph with **no negative-weight edges**.
 
 # Algorithm
 
-- Use a min heap to stores nodes, along with the weight of the path used to reach that node from the source (the path used to reach source itself has weight 0).
-- Keep track of the minimum distance so far from the source to every other node. If the nodes are numbered from 0 to n - 1, use an array `min_distances` of length n to do that. Initially, all values in the array are `infinity`, (except for the distance to the source, which has value 0).
+- Use a min heap to store (path_weight, node)s, where `path_weight` is total weight of the path used to reach node from source.
+- Keep track of the minimum distance so far from the source to every other node. If the nodes are numbered from 0 to n - 1, use an array `min_distances` of length n. Initially, min_distances[source] = 0, min_distances[other] = `infinity`.
 - In each iteration:
-  - Pop the node with minimum weight path from the heap.
-  - For each `node`, iterate over the neighbors.
-  - Let the current weight path from source to `node` as `current_distance`. For a given `neighbor`, let the weight of the edge `node -> neighbor` as `weight`. Traversing to this neighbor results in a path weight of `distance = current_distance + weight`
-  - There are 2 cases:
-    - `distance >= min_distances[neighbor]` -> we already found a path with shorter (or equal) distance earlier -> no updates required
-    - `distance < min_distances[neighbor]` -> this is the shortest path so far -> update `min_distances[neighbor] = distance` and push `(distance, neighbor)` onto the heap.
+  - Pop the node with minimum path weight from the heap.
+    Let the path weight be `current_distance`.
+  - For a given neighbor, let the weight of the edge (node, neighbor) be `weight`. Traversing to this neighbor results in a path weight of `distance = current_distance + weight`
+  - If `distance < min_distances[neighbor]`, update `min_distances[neighbor] = distance`, and push `(distance, neighbor)` onto the heap _(to improve min distances of its neighbors later)_.
+- The 1st time a node is popped from the min heap, its shortest distance from source is **finalized**.
 
 ## Pseudocode
 
-1. With `finalized` array
+**1. With `finalized` array**
 
 ```python
 d = [infinity] * n
@@ -24,42 +23,77 @@ finalized = [False] * n
 d[source] = 0
 min_heap = [(0, source)]
 
-while (min_heap is not empty):
+while min_heap:
     du, u = min_heap.pop()
+
+    # there can be multiple items with the same u (different distances) on the heap
+    # -> need this check to skip items after u is finalized
     if finalized[u]:
         continue
 
+    # the 1st time u is popped from the heap,
+    # its shortest distance is finalized.
     finalized[u] = True
 
-    for v, w_uv in (edges from u):
-        if not finalized[v] and du + w_uv < d[v]:
-            d[v] = du + w_uv
-            min_heap.push((d[v], neighbor))
+    for v, w in outgoing[u]:
+        if not finalized[v] and du + w < d[v]:
+            d[v] = du + w
+            min_heap.push((d[v], v))
 ```
 
-2. Optimize space (same complexity):
+**2.1. Optimize space (same complexity):**
 
-- Don't need to track `finalized` for all nodes.
-- When popping (du, u) from heap, skip if we've already found a shorter or equivalent path (skip if du >= d[u]).
+- Don't need `finalized` array.
+- When popping (du, u) from heap, skip if we've already found a shorter or equivalent path (du >= d[u]).
 - When exploring neighbors, only push to heap if it results in a shorter path (du + w_uv < d[v]).
-- Implementation notes: I chose to update distance after popping from heap. This is to handle source node. If we set d[source] = 0 before the `while` loop, the `du >= d[u]` will evaluate to True for the source, thus neighbors exploring is skipped.
+- **Implementation notes**:
+  - Update distance after popping from heap, not when pushing.
+  - If we set d[u] when pushing to heap, when popping, the check `du >= d[u]` will evaluate to True, which skips neighbors exploring.
 
 ```python
 d = [infinity] * n
 min_heap = [(0, source)]
 
-while (min_heap is not empty):
+while min_heap:
     du, u = min_heap.pop()
-    if du >= d[u]
+    if du >= d[u]:
         # ignore current path if already found a shorter or equivalent one
+        # (u's shortest distance from source has been finalized)
         continue
 
-    d[u] = u # update distance from source to u
+    # update shortest distance from source to u (finalized)
+    d[u] = u
 
-    for v, w_uv in (edges from u):
-        # add to heap if it results in a shorter path
-        if du + w_uv < d[v]:
-            min_heap.push((du + w_uv, v))
+    for v, w in outgoing[u]:
+        # add (path_weight, v) to heap if found a shorter path to v
+        if du + w < d[v]:
+            min_heap.push((du + w, v))
+```
+
+**2.2. Alternative**
+
+- Update shortest distance when pushing to heap, not when popping.
+- The check `du >= d[u]` must be changed to `du > d[u]` to allow `du == d[u]` (since d[u] has been set when pushing).
+
+```python
+d = [infinity] * n
+d[source] = 0 # update when push
+min_heap = [(0, source)]
+
+while min_heap:
+    du, u = min_heap.pop()
+    if du > d[u]:
+        # u's shortest distance from source has been finalized
+        continue
+    # - allow du == d[u] since d[u] is set before pushing to heap
+    # - there's only 1 item with du == d[u] on the heap,
+    #   since we only push if found a shorter path.
+
+    for v, w in outgoing[u]:
+        # add (path_weight, v) to heap if found a shorter path to v
+        if du + w < d[v]:
+            d[v] = du + w # update when push
+            min_heap.push((d[v], v))
 ```
 
 # Complexity
@@ -67,24 +101,26 @@ while (min_heap is not empty):
 - Let V = number of vertices, E = number of edges
 - The heap is a binary heap.
 
-1. Time complexity: O(V + E \* log(E)) = O(V + E \* log(V))
-
+```
+Time complexity: O(V + E*log(E))
 - Init 'd': O(V)
-- heappush/heappop: O(log(E)) per operation, O(E \* log(E)) in total.
-- Update d[u]: O(V) in total (once for each node)
+- heappush/heappop: O(E*log(E)) in total
+  . heap size = O(E) -> push/pop takes O(log(E))
+  . perform once for each edge.
+- Update d[u]: O(V) in total (perform once for each node)
 
-2. Space complexity: O(V + E)
-
+Space complexity: O(V + E)
 - 'd': O(V)
 - heap: O(E)
+```
 
 # Limitation
 
-- Dijkstra's algorithm should only be used on weighted directed graph with non-negative weights.
+- Dijkstra's algorithm can only be used on weighted directed graph with no negative-weight edges.
 
 ## Consequence of limitation
 
-- The first time a node is popped from the min heap, that's the shortest distance to reach it from source.
+- The first time a node is popped from the min heap, its shortest distance from source is **finalized**.
 
 ## Examples without limitation
 
@@ -131,21 +167,62 @@ while (min_heap is not empty):
 ## Idea
 
 - Use an array `parent` to track the previous node that reaches current node through the shortest path.
-- After Dijkstra's algorithm completes, traverse backward from a node to `source` through `parent`.
-- There may be multiple shortest paths to reach a node (same length), so each entry of `parent` should be an array.
-
-## Example
-
-- shortest paths to reach C from A: (A -> C) and (A -> B -> C)
-
-```
-      1
-  A -----> B
-  |        | 1
-  | 2      v
-  -------> C
-```
+- After Dijkstra's algorithm completes, traverse backward from a node to `source` through `parent` (backtracking).
+- There may be multiple shortest paths to reach a node, so each entry of `parent` should be an array.
 
 ## Pseudocode
 
-TODO
+- `Dijkstra`: extend (2.2)
+
+```python
+d = [inf] * n
+parent = [[] for _ in range(n)]
+
+d[source] = 0
+min_heap = [(0, source)]
+
+while min_heap:
+    du, u = min_heap.pop()
+    if du > u:
+        continue
+
+    # - allow du == d[u] since d[u] is set when pushing to heap
+    # - there's only 1 (du, u) with du = d[u]
+    #   -> the following loop only executes once.
+    #   -> will not append duplicate parent (u) for a neighbor v.
+
+    for v, w in outgoing[u]:
+        dv = du + w
+
+        # found shorter path
+        if dv < d[v]:
+            d[v] = dv
+            parent[v] = [u] # reset
+            min_heap.push((d[v], v))
+
+        # tie path found
+        elif dv == d[v]:
+            parent[v].append(u)
+            # don't append to min_heap
+```
+
+- `Backtracking` to find all shortest paths:
+
+```python
+def find_all_shortest_path(target: int) -> list[list[int]]:
+    target: int = ...
+    paths: list[list[int]] = []
+
+    def backtrack(curr_node: int, curr_path: list[int]) -> None:
+        if curr_node == source:
+            paths.append(curr_path[::-1])
+            return
+
+        for p in parent[curr_node]:
+            curr_path.append(p)
+            backtrack(p, curr_path)
+            curr_path.pop()
+
+    backtrack(target, [target])
+    return paths
+```
