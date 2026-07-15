@@ -10,23 +10,24 @@ You are also given an integer k.
 We will send a signal from node k.
 Return the minimum time it takes for every node to receive the signal.
 If it's impossible for all nodes to receive the signal, return -1.
+
+Related constraints:
+. 0 <= wi <= 100
 """
 
 """
 Analysis:
 - The graph is given as an array of edges.
-  Each edge has an associated non-negative weight.
+  All edges have non-negative weights.
 - The answer to the problem can be found by finding the shortest path
   from k to every other node, then taking the maximum of those values.
-- Since the graph only has non-negative weights, and source node is provided,
-  we can use Dijkstra's algorithm.
 
 => Algorithm:
 - Build the graph as adjacency list:
-- Run Dijkstra's algorithm on the graph, starting from k.
-  . The nodes are 1-indexed so we can init distance for n + 1 nodes.
-    d[0] will not be used.
-- Return the maximum value in d (except).
+- Run Dijkstra's algorithm on the graph with source = k.
+  . The nodes are 1-indexed 
+    -> Use distance array d of size n + 1. d[0] will not be used.
+- Return the maximum value in d (exclude d[0]).
 - If the maximum value is infinity, it indicates that there are nodes
   unreachable from k -> return -1.
 """
@@ -43,7 +44,9 @@ def network_delay_time(times: list[list[int]], n: int, k: int) -> int:
 
     d = _dijkstra_v1(n + 1, k, graph)
     # d = _dijkstra_v2(n + 1, k, graph)
-    answer = max(d[1:])
+    # d = _dijkstra_v3(n + 1, k, graph)
+
+    answer = max(d[1:])  # exclude d[0]
     return answer if answer < math.inf else -1
 
 
@@ -53,14 +56,17 @@ def _dijkstra_v1(
     d: list[float | int] = [math.inf] * n
     heap: list[tuple[int, int]] = []
     heapq.heappush(heap, (0, source))
+
     while heap:
         du, u = heapq.heappop(heap)
         if du >= d[u]:
             continue
+
         d[u] = du
         for v, w_uv in graph[u]:
             if du + w_uv < d[v]:
                 heapq.heappush(heap, (du + w_uv, v))
+
     return d
 
 
@@ -68,32 +74,65 @@ def _dijkstra_v2(
     n: int, source: int, graph: dict[int, list[tuple[int, int]]]
 ) -> list[float | int]:
     d: list[float | int] = [math.inf] * n
-    finalized: list[bool] = [False] * n
-    d[source] = 0
     heap: list[tuple[int, int]] = []
+    d[source] = 0
     heapq.heappush(heap, (0, source))
+
+    while heap:
+        du, u = heapq.heappop(heap)
+        if du > d[u]:
+            continue
+
+        for v, w_uv in graph[u]:
+            if du + w_uv < d[v]:
+                d[v] = du + w_uv
+                heapq.heappush(heap, (d[v], v))
+
+    return d
+
+
+def _dijkstra_v3(
+    n: int, source: int, graph: dict[int, list[tuple[int, int]]]
+) -> list[float | int]:
+    d: list[float | int] = [math.inf] * n
+    finalized: list[bool] = [False] * n
+    heap: list[tuple[int, int]] = []
+
+    d[source] = 0
+    heapq.heappush(heap, (0, source))
+
     while heap:
         du, u = heapq.heappop(heap)
         if finalized[u]:
             continue
+
         finalized[u] = True
+
         for v, w_uv in graph[u]:
             if not finalized[v] and du + w_uv < d[v]:
                 d[v] = du + w_uv
                 heapq.heappush(heap, (d[v], v))
+
     return d
+
 
 """
 Complexity:
 - Let V = n = number of nodes.
       E = len(times) = number of edges.
 
-1. Time complexity: O(V + E*log(V))
-- Build 'graph': O(E)
-- Dijkstra's algorithm: O(V + E*log(V))
+1. Time complexity: O(V + E*log(E))
+- Build adjacency list: O(E)
+- Dijkstra's algorithm: O(V + E*log(E))
+  . Init 'd': O(V)
+  . heap push/pop: O(E*log(E))
+    . heap size = O(E) -> each push/pop takes O(log(E))
+    . perform once for each edge
 - Find answer: O(V)
 
 2. Space complexity: O(V + E)
-- 'graph': O(E)
+- adjacency list: O(E)
 - Dijkstra's algorithm: O(V + E)
+  . 'd': O(V)
+  . heap: O(E)
 """
