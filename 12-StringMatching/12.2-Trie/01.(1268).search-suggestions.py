@@ -1,17 +1,18 @@
 """
 https://leetcode.com/problems/search-suggestions-system/
 
-You are given an array of strings 'products' and a string searchWord.
+You are given an array of strings 'products' and a string 'searchWord'.
 
 Design a system that suggests at most 3 product names from 'products'
-after each character of searchWord is typed.
+after each character of 'searchWord' is typed.
 
 Suggested products should share a common prefix with 'searchWord'.
 
 If there are more than 3 products with a common prefix,
 choose the 3 lexicographical minimums.
 
-Return a list of lists of the suggested products after each character of searchWord is typed.
+Return a list of lists of the suggested products
+after each character of 'searchWord' is typed.
 """
 
 """
@@ -23,13 +24,12 @@ lexicographical order:
   . If one string ends before the other -> the shorter one comes first.
 """
 
-# ===== Brute-force approach =====
-# ================================
+# ===== Approach 1: Brute-force =====
+# ===================================
 """
 - For each prefix, iterate over 'products' and check which ones match.
-- Reuse list of products already matched with shorter prefix.
-  -> only have to check the current character.
-- Sort 'products' in ascending order (for choosing 3 lexicographical minimums).
+- At each character, only check products already matched shorter prefix.
+- Sort 'products' in ascending order for choosing lexicographical minimums.
 """
 
 
@@ -59,36 +59,34 @@ def suggested_products(products: list[str], search_word: str) -> list[list[str]]
 """
 Complexity:
 - Let n = len(products)
-      k = average products[i] length
+      k = len(products[i])
       m = len(searchWord)
 
-1. Time complexity:
+1. Time complexity: O(n*k*log(n) + n*m)
 - Sort 'products': O(n*k*log(n))    (string comparison costs O(k))
 - Iterate over 'searchWord': m iterations
-  - Iterate over 'filtered_products': O(n)
-=> Overall: O(n*k*log(n) + n*m)
+  . Iterate over 'filtered_products': O(n)
 
-2. Space complexity: 
-- sort 'products': O(n)
+2. Space complexity: O(n)
+- sort 'products': O(n) (timsort)
 - 'filtered_products': O(n)
-=> Overall: O(n)
 """
 
 
-# ===== Improvement 1 =====
-# =========================
+# === Approach 2.1: Trie + DFS ===
+# ================================
 """
 - Build a trie from 'products'.
 - For each prefix:
   . Traverse the trie following characters in prefix.
-  . Perform DFS/BFS from the reached node to find matched products.
+  . Perform traversal from reached node to find matched products.
   . To limit to k suggestions, use DFS and stop early.
-  . Prioritize the lexicographical lower keys.
+    Prioritize lexicographical lower keys.
 - Optimization:
   . Avoid string slicing to get prefix.
     -> pass 'searchWord' and upper bound index i.
   . Avoid repeating traversal for incremental prefix.
-    -> start from the reached node for previous prefix.
+    -> start from reached node for previous prefix.
 """
 
 
@@ -118,22 +116,22 @@ class Trie1:
         self, start_node: TrieNode1 | None, search_word: str, i: int, limit: int
     ) -> tuple[list[str]]:
         """
-        Find all words with prefix = search_word[0:i+1].
+        Find all words with prefix = search_word[0..i].
         Just match search_word[i] character, starting from start_node,
-        which is the node reached by matching previous prefix search_word[0:i].
+        which is the node reached by matching previous prefix search_word[0..i-1].
 
         Returns:
-        - the last node reached by matching prefix,
-          or None if there's no path matches prefix.
+        - the last node reached by matching prefix (None if no paths match).
         - list of matching words (limited).
         """
-        # start_node is None -> matching failed from a previous prefix
+
         if not start_node:
+            # matching failed from a previous prefix
             return None, []
 
         # Go along 1 path with prefix
-        # (match search_word[i] character starting from start_node,
-        #  don't re-traverse from the root except for i = 0)
+        # - match search_word[i] character starting from start_node,
+        #   don't re-traverse from the root except for i = 0.
         current = start_node
         c = search_word[i]
         if c not in current.children:
@@ -176,37 +174,34 @@ def suggested_products(products: list[str], search_word: str) -> list[list[str]]
 """
 Complexity:
 - Let n = len(products)
-      k = average products[i] length
+      k = len(products[i])
       m = len(searchWord)
       A = alphabet size (26, fixed)
       L = suggestions limit (3, fixed)
 
-1. Time complexity:
-- Build trie from 'products': O(n * k)
+1. Time complexity: O(m*n*k)
+- Build trie from 'products': O(n*k)
 - Traverse prefixes of 'searchWord': O(m)
-  (each character is matched once, reuse previous traversal with start_node) 
-- Finding suggestions for 1 prefix:
-  . DFS starts from the reached node, stops after L words are found,
-    with max depth ~ O(k): O(L * k) ~ O(k)
-  . children keys sorting: O(A * log(A)) ~ O(1)
--> Finding suggestions for all prefixes: O(m * k)
-=> Overall: O(n*k + m*k)
+  . each character is matched once, reuse previous traversal with start_node
+- Finding suggestions for 1 prefix: O(n*k)
+  . DFS: O(n*k)
+    . children keys sorting: O(A*log(A)) ~ O(1)
+  -> Finding suggestions for all prefixes: O(m*n*k)
 
-2. Space complexity: 
-- trie: O(n * k)
+2. Space complexity: O(n*k)
+- trie: O(n*k)
 - stack: O(k)
-- sorted keys: O(L) ~ O(1)
-=> Overall: O(n * k)
+- sorted keys: O(A) ~ O(1)
 """
 
 
-# ===== Improvement 2 =====
-# =========================
+# === Approach 2.2: store precomputed results at trie node ===
 """
 - Use an attribute 'matched_words' at each trie node to store the products 
   that share common prefix up to that node.
 - Limit the size of 'matched_words' to 3 and keep it sorted.
-  -> Sort products in lexicographical order, then insert in that order.
+  -> Sort products in lexicographical order.
+     Insert to trie in that order.
 - Once the trie is built, we can instantly know the answer when arriving at a node.
 """
 
@@ -218,10 +213,8 @@ class TrieNode2:
 
 
 class Trie2:
-    def __init__(self, words: list[str] = []):
+    def __init__(self):
         self.root = TrieNode2()
-        for word in words:
-            self.insert(word)
 
     def insert(self, word: str) -> None:
         current = self.root
@@ -240,15 +233,16 @@ class Trie2:
 
         for c in search_word:
             # Keep using empty list for subsequent prefixes
-            # if matching an earlier prefix failed
+            # if failed to match an earlier prefix
             if failed:
                 results.append([])
+                continue
 
             if c not in current.children:
                 failed = True
                 results.append([])
             else:
-                # Match the current character then get matched words
+                # Match the current character and collect precomputed result
                 current = current.children[c]
                 results.append(current.matched_words)
 
@@ -256,27 +250,29 @@ class Trie2:
 
 
 def suggested_products(products: list[str], search_word: str) -> list[list[str]]:
+    trie = Trie2()
     products.sort()
-    trie = Trie2(products)
+    for word in products:
+        trie.insert(word)
     return trie.find_matched_words_at_all_prefixes(search_word)
 
 
 """
 Complexity:
 - Let n = len(products)
-      k = average products[i] length
+      k = len(products[i])
       m = len(searchWord)
       A = alphabet size (26, fixed)
       L = suggestions limit (3, fixed)
 
-1. Time complexity:
+1. Time complexity: O(n*k*log(n) + n*k + m) = O(n*k*log(n) + m)
 - Sort 'products': O(n*k*log(n))    (string comparison costs O(k))
-- Build trie from 'products': O(n * k)
+- Build trie from 'products': O(n*k)
 - Traverse trie with 'searchWord' to collect answers: O(m)
-=> Overall: O(n*k*log(n) + n*k + m)
 
-2. Space complexity: 
-- trie: O(n * k)
-  . matched_words per node: O(L) ~ O(1)
-=> Overall: O(n * k)
+2. Space complexity: O(n + n*k^2) = O(n*k^2)
+- Sort 'products': O(n) (timsort)
+- trie: O(n*k^2)
+  . number of nodes: O(n*k)
+  . matched_words per node: O(L*k) ~ O(k)
 """

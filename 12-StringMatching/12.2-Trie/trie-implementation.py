@@ -7,10 +7,14 @@ There are various applications of this data structure,
 such as autocomplete and spellchecker.
 
 Implement the Trie class:
-Trie() Initializes the trie object.
-void insert(String word) Inserts the string word into the trie.
-boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before), and false otherwise.
-boolean startsWith(String prefix) Returns true if there is a previously inserted string word that has the prefix prefix, and false otherwise.
+. Trie() Initializes the trie object.
+. void insert(String word): Inserts the string 'word' into the trie.
+. boolean search(String word): 
+  Returns true if the string 'word' is in the trie 
+  (i.e., was inserted before), and false otherwise.
+. boolean startsWith(String prefix):
+  Returns true if there is a previously inserted string word 
+  that has the prefix 'prefix', and false otherwise.
 
 Constraints:
 1 <= word.length, prefix.length <= 2000
@@ -80,7 +84,7 @@ class TrieNode:
     def __init__(self):
         self.children: dict[str, TrieNode] = {}
         self.completed: bool = False  # mark full word
-        self.data = None  # don't need data in this problem
+        # don't need extra data in this problem
 
 
 class Trie:
@@ -123,5 +127,5 @@ Complexity:
 - startsWith: O(k)
 
 2. Space complexity: O(n * k)
-(worst case: the words don't share prefix)
+   (worst case: the words don't share prefix)
 """
