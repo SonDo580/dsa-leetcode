@@ -1,11 +1,9 @@
 """
 General idea:
 - Store numbers by breaking them into digits (or bits) and branching.
-  -> Map numbers to tree paths.
-"""
+  -> Map numbers to tree paths
 
-"""
-RST structure (branching by bit):
+Structure (branching by bit):
 - Each edge represents a bit value (0 or 1).
 - Traversing from root to leaf goes from MSB to LSB.
 - Leaves are at the same depth.
@@ -17,9 +15,9 @@ RST structure (branching by bit):
 
 
 class RSTNode:
-    def __init__(self, value: int | None):
+    def __init__(self):
         self.children: dict[int, RSTNode] = {}  # key: 0 | 1
-        self.value: int | None = value  # only for leaves
+        self.value: int | None = None  # only for leaves
 
 
 class RST:
@@ -52,7 +50,7 @@ class RST:
                 current = current.children[0]
             elif 1 in current.children:
                 current = current.children[1]
-            else:
+            else:  # only occur when the RST is empty
                 return None
         return current.value
 
@@ -63,7 +61,7 @@ class RST:
                 current = current.children[1]
             elif 0 in current.children:
                 current = current.children[0]
-            else:
+            else:  # only occur when the RST is empty
                 return None
         return current.value
 
@@ -79,7 +77,7 @@ Complexity:
 - insert: O(b) ~ O(1)
 - search: O(b) ~ O(1)
 
-2. Space complexity: O(n * b) ~ O(n) for the Radix search tree
+2. Space complexity: O(n * b) ~ O(n)
 . bigger when numbers differ early (near the MSB).
 . smaller when numbers share long prefixes.
 """

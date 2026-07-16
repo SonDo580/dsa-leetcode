@@ -14,7 +14,7 @@ Constraints:
 # ================================
 """
 - Try XOR all pairs of numbers and find the maximum result.
-- Include 0 as result of a number XOR itself.
+- Include 0 (result of a number XOR itself).
 """
 
 
@@ -29,9 +29,7 @@ def find_max_xor(nums: list[int]) -> int:
 
 """
 Complexity:
-
 1. Time complexity: O(n^2)
-
 2. Space complexity: O(1)
 """
 
@@ -39,7 +37,7 @@ Complexity:
 # ===== Radix search tree =====
 # =============================
 """
-- For each number, find a number with "opposite" bits going from MSB to LSB
+- For a given x, to maximize x XOR y, find y with opposite bit patterns.
   (because 0 ^ 1 = 1).
 - To do that efficiently, build a radix search tree (branching by bits).
   . 0 <= nums[i] <= 2^31 - 1 -> the tree height is 32 (bits length = 32).
@@ -99,10 +97,9 @@ Complexity:
 - Let n = len(nums)
       b = bits length (32)
 
-1. Time complexity: 
-- Build RST (insert n values): O(n * b)
-- Find maximum XOR: O(n * b)
-=> Overall: O(n * b)
+1. Time complexity: O(n*b)
+- Build RST (insert n values): O(n*b)
+- Find maximum XOR: O(n*b)
 
-2. Space complexity: O(n * b) for the RST
+2. Space complexity: O(n*b) for the RST
 """
