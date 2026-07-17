@@ -6,10 +6,8 @@ Determine if a string `pattern` appears inside a string `text`.
 
 ## Brute-force
 
-- From each position in `text`, compare the next m characters with `pattern`.
-- Stop early on mismatch.
-
-Time complexity: O(m \* n)
+- From each position in `text`, compare the next m characters with `pattern`. Stop on mismatch.
+- Time complexity: `O(m*n)`
 
 ## Hashing
 
@@ -21,7 +19,7 @@ Time complexity: O(m \* n)
 - Rolling hash: can be update in O(1) time when sliding the window.
 - Hashes mismatch -> definite non-match.
 - Hashes match -> very probable match.
-  _(if there are many false positive, performance would degrade to O(m \* n) like brute-force)_
+  - If there are many false positives, performance would degrade to `O(m*n)` like brute-force.
 
 ## Rabin-Karp algorithm
 
@@ -46,7 +44,7 @@ where:
 hash(s[i..i+L-1]) = s[i]*p^(L-1) + s[i+1]*p^(L-2) + ... + s[i+L-1]*p^0
 ```
 
-- Slide the window to the right ([i+1..L]):
+- Slide the window to the right ([i+1..i+L]):
 
 ```
 hash(s[i+1..i+L])
@@ -95,7 +93,7 @@ hash(s[0..i+1]) = (s[0]* p^(i+1) + s[1]*p^i + ... + s[i]*p^1 + s[i+1]*p^0) % q
 
 4. **Hash formula intuition**
 
--- **Let's try a simple hash function:** assign integer values for characters and sum them.
+-- **Let's try a simple hash function:** sum numeric values of characters.
 
 ```
 hash(s) = s[0] + s[1] + ... + s[n - 1]
