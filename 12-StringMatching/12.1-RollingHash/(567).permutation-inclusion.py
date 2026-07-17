@@ -124,8 +124,8 @@ Complexity:
 2. Space complexity: O(m) for 'freq'
 """
 
-# ===== Approach 2 =====
-# ======================
+# ===== Approach 2: rolling hash =====
+# ====================================
 """
 General idea:
 - Compute a hash for s1 and each window of s2
@@ -138,8 +138,8 @@ General idea:
 Find a hash function:
 - To produce the same hash for permutations,
   only use character values, don't combine with positions.
-- Let's try summing character values (a -> 1, ..., z -> 26):
-  This can collide easily: 
+- Let's try summing character values (a -> 0, ..., z -> 25)
+  -> Collide easily. Example: 
     . hash(abc) = 1 + 2 + 3 = 6
     . hash(bbb) = 2 + 2 + 2 = 6
 -> Use exponents (a -> 2^0, ..., z -> 2^25)
@@ -197,7 +197,8 @@ Complexity:
   . compare character frequencies: O(m)
     (if the hash function is good, this only happen once)
   . update character frequencies for next window: O(1)
-=> Overall: O(n + m)
+=> . Worst case: O((n - m) * m)
+   . If hash function is good: O(n + m)
 
 2. Space complexity: O(m) for 's1_freq' and 'window_freq'
 """
