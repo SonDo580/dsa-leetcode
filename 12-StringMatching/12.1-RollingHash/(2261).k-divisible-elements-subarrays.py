@@ -23,10 +23,11 @@ Idea:
 - Avoid duplicates: Need a way to hash the sub-array
  . Method 1: convert sub-array to tuple and add to set.
  . Method 2: rolling hash
+ . Method 3: trie for suffix matching
 """
 
 
-# === Avoid duplicates with set of tuples ===
+# === Method 1: Avoid duplicates with set of tuples ===
 def count_distinct(nums: list[int], k: int, p: int) -> int:
     divisible_by_p_cnt = 0  # number of elements divisible by p in current window
     seen: set[tuple] = set()  # valid windows encountered
@@ -81,7 +82,7 @@ Complexity:
 """
 
 
-# === Avoid duplicates with rolling hash ===
+# === Method 2: Avoid duplicates with rolling hash ===
 """
 - Use rolling hash to recalculate hash value quickly when elements 
   enter and leave the window. 
@@ -194,4 +195,81 @@ Complexity:
   . length 1: n windows
 - But we don't store the whole window, just the left and right bounds
   -> space = 1 + 2 + ... + n = n*(n+1)/2 = O(n^2)
+"""
+
+
+# === Method 3: Avoid duplicates with trie ===
+"""
+- Check all valid windows that end at 'right'
+  -> Build a trie for suffix matching ('right' is in root.children)
+- All trie nodes are completed, except root
+  (a path from any node to root forms a valid window)
+  -> Don't need to track 'completed' explicitly.
+- For each valid window:
+  . Iterate in [right..left] order.
+  . If matching nums[i] reaches a completed trie node,
+    the window [i..right] already exists.
+  . Otherwise, insert a new trie node and
+    increment number of distinct valid windows.
+- Note: 
+"""
+
+
+class TrieNode:
+    def __init__(self):
+        self.children: dict[int, TrieNode] = {}  # numeric keys
+
+
+class Trie:
+    """Trie for suffix matching"""
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, nums: list[int], left: int, right: int) -> int:
+        """Insert/Match nums[left..right] in reverse order. Return number of inserted nodes."""
+        curr = self.root
+        inserted_cnt = 0
+        for i in range(right, left - 1, -1):
+            num = nums[i]
+            if num not in curr.children:
+                curr.children[num] = TrieNode()
+                inserted_cnt += 1
+            curr = curr.children[num]
+        return inserted_cnt
+
+
+def count_distinct(nums: list[int], k: int, p: int) -> int:
+    divisible_by_p_cnt = 0  # number of elements divisible by p in current window
+    trie = Trie()
+    ans = 0  # number of distinct valid windows
+
+    left = 0
+    for right in range(len(nums)):
+        if nums[right] % p == 0:
+            divisible_by_p_cnt += 1
+        while divisible_by_p_cnt > k:
+            if nums[left] % p == 0:
+                divisible_by_p_cnt -= 1
+            left += 1
+
+        # check all valid windows that end at 'right'
+        ans += trie.insert(nums, left, right)
+
+    return ans
+
+
+"""
+Complexity:
+- Let n = len(nums)
+
+1. Time complexity: O(n^2)
+- 'right' moves O(n) times.
+- 'left' moves O(n) times.
+- check all valid windows that ends at a given 'right': O(right)
+  (worst case: k >= n -> 'left' stays at 0)
+  -> for all values of 'right':
+     . sum(O(right) for right in [0..n-1]) = O(n^2)
+
+2. Space complexity: O(n) for trie
 """
