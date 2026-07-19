@@ -27,25 +27,25 @@
   - right child is at `2*i + 2`.
   - parent is at `(i - 1) // 2`.
 - The root is at index 0.
-- Note that a node may have 0 children and root node has no parent.
+- A node may have 0 or 2 children. Root has no parent.
 
 # Proof
 
 **1. For a node with index `i`, left child is at `2*i + 1`, right child is at `2*i + 2`**
 
 ```
-- The binary tree is full and balanced -> Every level except the last is completely filled.
+- The binary tree is full and balanced
+  -> Every level except the last is completely filled.
 - Each level d (d = 0 at the root) can hold 2^d nodes.
 - Total number of nodes in all levels before d:
   . 2^0 + 2^1 + ... + 2^(d-1) = 2^d - 1
 - Pick the kth node on level d (0 <= k < 2^d). Its index in segment tree array is:
   . i = (2^d - 1) + k
-- The k nodes to the left of node i on level d has the first 2*k nodes on level d + 1 as children (keep empty children slots) -> The left child of node i is the (2*k)th node on level d + 1:
+- The k nodes to the left of node i on level d has the first 2*k nodes on level d + 1 as children (keep empty children slots).
+  -> The left child of node i is the (2*k)th node on level d + 1:
   . lci = (2^(d + 1) - 1) + 2*k
         = 2 * (2^d + k) - 1
-  . i = (2^d - 1) + k
-    -> 2^d + k = i + 1
-  . substitute: lci = 2 * (i + 1) - 1 = 2*i + 1
+        = 2*i + 1
 - The right child is next to the left child:
   . rci = lci + 1 = 2*i + 2
 ```
@@ -53,20 +53,25 @@
 **2. Why do we need an array with `4*n` slots, where n is the number of elements in the original array**
 
 ```
-- If n is a power of 2 (n = 2^d), the tree is a perfect binary tree (1 -> 2 -> ... -> 2^d nodes at each level). Total number of nodes is:
-  . 2^(d + 1) - 1 (sum of geometric series).
+- If n is a power of 2 (n = 2^d), the tree is a perfect binary tree
+  . nodes at each level: 1 -> 2 -> ... -> 2^d.
+  . Total number of nodes:
+    2^(d + 1) - 1.
     = 2*2^d - 1
     = 2*n - 1
     < 4*n
 
-- If n is a not power of 2 (2^d < n < 2^(d + 1)), we still need 2^(d + 1) slots for the last level. Total number of slots is:
-  . 2^(d + 2) - 1
+- If n is a not power of 2 (2^d < n < 2^(d + 1)):
+  . nodes at each level: 1 -> 2 -> ... -> 2^d -> 2^(d+1).
+    (last level contains empty slots).
+  . Total number of nodes:
+    2^(d + 2) - 1
     = 4*2^d - 1
     < 4*n - 1
     < 4*n
 ```
 
-**Aside:** The binary heap only needs n slots because it represents a complete binary tree.
+**Aside:** The binary heap only needs exactly n slots because it represents a complete binary tree.
 
 **3. Related: Sum of geometric series**
 
@@ -82,19 +87,28 @@ r*Sn = a*r^1 + a*r^2 + ... + a*r^n
 - **Special cases:**
 
 ```
-r = 0: Sn = 0
-r = 1: Sn = a*n
-0 < r < 1 and n -> inf: (converge) Sn = a / (1 - r)
-r < 0 and n -> inf: (diverge)
+. r = 0: Sn = a
+. r = 1: Sn = a*n
+. 0 < r < 1 -> converge when n approaches inf: Sn = a / (1 - r)
+. r < 0 -> diverge when n approaches inf (alternate operand sign)
+```
+
+- **Our case**:
+
+```
+Sn = 2^0 + 2^1 + ... + 2^(n-1)
+   = a * (1 - r^n) / (1 - r)
+   = 1 * (1 - 2^n) / (1 - 2)
+   = 2^n - 1
 ```
 
 # Intro Problem
 
 - Given an array `arr` of size n, perform 2 types of operations:
-  - range_query(L, R): find the sum/min/max of elements from L to R.
+  - `range_query(L, R)`: find the sum/min/max of elements from L to R.
   - update(i, x): change the value of arr[i] to x.
-- For every range_query, iterate from L to R to aggregate result takes O(n). Each update takes O(1).
-- With segment tree, both operations take O(log(n)).
+- Normal way: range query takes O(n) _(iterate from L to R to aggregate result)_, update takes O(1).
+- With segment tree: both operations take O(log(n)).
 
 ## Implementation
 
@@ -102,15 +116,25 @@ See `segment-tree.py`
 
 # Lazy propagation
 
-- A technique to perform range updates quickly.
-- Viable if we can calculate the value of an internal node without visiting its children.
-  - Example: add `v` to every element in a range of size `k` -> `new_sum = old_sum + k * v`
+- A technique to perform range updates quickly, if we can calculate the value of an internal node without visiting its children.
+- Example: add `v` to every element in a range of size `k` -> `new_sum = old_sum + k*v`
 
 ## Main idea
 
 - Use an extra tree `lazy` with the same structure as `tree` to store pending updates.
-- If the range managed by current node is fully contained in range to update, quickly calculate the new value for that, and accumulate pending update to propagate to its children later (don't update children yet).
-- When querying a node, propagate the pending update to its children, and reset its lazy state.
+- Update:
+  - If the range managed by current node is fully contained in the range to update:
+    - Quickly calculate new value for current node
+    - Accumulate pending update to propagate to children later.
+  - Otherwise:
+    - Propagate pending updates to node's children.
+    - Update node's children.
+- Query:
+  - If the range managed by current node is fully contained in the query range:
+    - Return the precomputed value at node.
+  - Otherwise:
+    - Propagate pending updates to node's children.
+    - Reset node's lazy state.
 
 ## Implementation
 
