@@ -131,4 +131,146 @@ Complexity:
 
 
 # === Approach 3: Segment Tree ===
-# TODO
+"""
+Idea:
+- Find number of smaller items of each item when the array is sorted
+  (produce array of ranks):
+  . Produce sorted array (ascending order).
+  . For each nums[i] in original array, find smallest j in sorted array 
+    such that sorted_arr[j] >= nums[i] (bisect left / lower bound).
+    (equal items have the same rank)
+  . j = number of (all) items smaller than nums[i]
+      = rank of nums[i]
+- Use a segment tree to manage the whole range of ranks.
+  . node's value is number of items with rank in node's managed range
+    -> node's value = left_child's value + right_child's value. 
+- Process original array in reverse order:
+  . At nums[i], query how many items have been inserted into the range [0, rank-1].
+    That's number of smaller items than nums[i] on the right in original array
+    (since we process the original array in reverse order).
+  . Update segment tree to reflect that nums[i] has been encounter
+    (increase number of items for nums[i]'s rank)
+"""
+
+
+class SegmentTree:
+    def __init__(self, max_rank: int):
+        # node's value = number of items with rank in node's managed range
+        self.tree = [0] * 4 * (max_rank + 1)  # rank is 0-indexed
+
+    def update(self, rank: int, left: int, right: int, i: int) -> None:
+        """Update when encountering an item with rank 'rank'."""
+        if left == right:  # reached leaf node
+            self.tree[i] += 1
+            return
+
+        mid = (left + right) // 2
+        lci = 2 * i + 1
+        rci = 2 * i + 2
+        if rank <= mid:  # target is in left child
+            self.update(rank, left, mid, lci)
+        else:  # target is in right child
+            self.update(rank, mid + 1, right, rci)
+
+        # update node after updating children
+        self.tree[i] = self.tree[lci] + self.tree[rci]
+
+    def query_range(self, rank: int, left: int, right: int, i: int) -> int:
+        """Return number of items with rank < 'rank'."""
+        # rank 0 has no smaller items
+        if rank == 0:
+            return 0
+
+        qleft, qright = 0, rank - 1
+
+        # node's range is outside query range
+        if qright < left or right < qleft:
+            return 0
+
+        # node's range is fully contained in query range
+        # -> return precomputed result
+        if qleft <= left and right <= qright:
+            return self.tree[i]
+
+        # partial overlap
+        # -> query both halves and aggregate
+        mid = (left + right) // 2
+        left_res = self.query_range(rank, left, mid, 2 * i + 1)
+        right_res = self.query_range(rank, mid + 1, right, 2 * i + 2)
+        return left_res + right_res
+
+
+def _bisect_left(arr: list[int], x: int) -> int:
+    """Return smallest i such that arr[i] >= x (arr is ascending)."""
+    left = 0
+    right = len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] >= x:
+            right = mid - 1  # search lower half for smaller answer
+        else:
+            left = mid + 1  # search upper half for valid answer
+    return left
+
+
+def _get_ranks(nums: list[int]) -> tuple[list[int], int]:
+    """
+    Return rank of each number in sorted nums and max rank.
+    (rank = number of items smaller than current item)
+    """
+    sorted_nums = sorted(nums)
+    ranks: list[int] = []
+    max_rank = -1
+
+    for num in nums:
+        idx = _bisect_left(sorted_nums, num)
+        max_rank = max(max_rank, idx)
+        ranks.append(idx)
+
+    return ranks, max_rank
+
+
+class Solution:
+    def countSmaller(self, nums: list[int]) -> list[int]:
+        n = len(nums)
+        ans: list[int] = [0] * n
+        ranks, max_rank = _get_ranks(nums)
+        st = SegmentTree(max_rank)
+
+        for i in range(n - 1, -1, -1):
+            rank = ranks[i]
+            ans[i] = st.query_range(rank, left=0, right=max_rank, i=0)
+            st.update(rank, left=0, right=max_rank, i=0)
+
+        return ans
+
+
+"""
+Complexity:
+- Let n = len(nums)
+  -> max_rank = O(n) (worst case: all numbers are unique)
+- The tree is full and balanced
+  -> . number of nodes: O(4*n) = O(n) (last level contains empty slots)
+     . height: h = O(log(4*n)) = O(log(n))
+
+1. Time complexity:
+- Init 'ans': O(n)
+- Produce 'ranks': O(n*log(n))
+  . sort array: O(n*log(n)) 
+  . bisect left for n numbers: O(n*log(n))
+- Init 'st': O(4*n) = O(n)
+- Perform st.query and st.update for n numbers: O(n*log(n))
+  . st.update: O(h) = O(log(n))
+    . Each update follow exactly 1 path from root to a leaf
+  . st.query: O(log(n))
+    . At most 2 nodes per level can spawn extra calls, 2 calls per node
+      (Only boundaries can overlap partially with query range)
+      -> At most 4 nodes are processed at each level.
+      -> Work across levels: O(4*h) = O(log(n)) 
+
+2. Space complexity: O(n)
+- sorted 'nums': O(n)
+- 'ranks': O(n)
+- 'st': O(4*n) for 'tree'
+- recursion stack: O(h) = O(log(n))
+"""
