@@ -104,3 +104,48 @@ result = H  0     0 ... 0
 ```
 
 - The result is `n` with the lowest set bit cleared
+
+=====
+# Signed numbers - 2's complement
+the sign of the binary number is determined by the leading digit
+0 for non-negative
+1 for negative
+
+perform addition in 2's complement...
+
+# Common trick
+x ^ 0 = x
+x ^ 1 = ~x
+x ^ x = 0
+
+x & 0 = 0
+x & 1 = x 
+x & x = x
+
+x | 0 = x
+x | 1 = 1
+x | x = x
+
+a << b = a * 2^b
+a >> b = a // 2^b
+Logical & arithmetic right shift
+- 3 >>> 1 = 2147483646 (pad with 0)
+-3 >> 1 = -2 (keep signed bit)
+(in Python right shift is arithmetic shift) 
+
+# get kth bit of x
+(x >> k) & 1
+(x & (1 << k)) > 0 ? 1 : 0
+
+# set kth bit of x to 1
+x | (1 << k)
+
+# set kth bit of x to 0
+x & (~(1 << k))
+
+# flip kth bit of x
+x ^ (1 << k)
+
+# Prove that n // 2 // 2 ... k times = n // 2^k
+. (n >> x) >> y = n >> (x + y)
+. n = q*2^k + r (r < 2^k)
