@@ -131,7 +131,7 @@ Complexity:
              (Later numbers can extend from it instead of previous tails[L])
   -> Consequence: 'tails' is strictly increasing
   -> Can use binary search in case 2
-- If len(tails) reaches 3 at any point, return True 
+- If len(tails) reaches 3 at any point, return True.
 """
 
 from bisect import bisect_left
@@ -153,6 +153,76 @@ class Solution:
 
 """
 Complexity:
-1. Time complexity: O(n*log(n))
-2. Space complexity: O(n) for 'tails'
+- Stop when len(tails) == 3
+
+1. Time complexity: O(n*log(2)) = O(n)
+2. Space complexity: O(3) = O(1) for 'tails'
+"""
+
+
+# === Approach 3.1: Linear search ===
+"""
+- Don't need binary search since the size is small
+  (stop when len(tails) == 3 -> only search at most 2 items)
+"""
+
+
+class Solution:
+    def increasingTriplet(self, nums: list[int]) -> bool:
+        tails: list[int] = []
+        for num in nums:
+            if len(tails) == 0 or num > tails[-1]:
+                tails.append(num)
+                if len(tails) == 3:
+                    return True
+            elif num < tails[-1]:
+                for i in range(len(tails)):
+                    if tails[i] >= num:
+                        tails[i] = num
+                        break
+        return False
+
+
+"""
+Complexity:
+- Stop when len(tails) == 3
+
+1. Time complexity: O(n*2) = O(n)
+2. Space complexity: O(3) = O(1) for 'tails'
+"""
+
+
+# === Approach 3.2: Reduce space ===
+"""
+- Don't need 'tails' array. Use 2 variables 
+  . first <-> tails[0]
+  . second <-> tails[1].
+- When encounter num > second, return True.
+
+Notes:
+- 'first' doesn't need to come before 'second' in original 'nums'.
+  They are just smallest tail (so far) for a subsequence of length 1 and 2.
+"""
+
+
+class Solution:
+    def increasingTriplet(self, nums: list[int]) -> bool:
+        first = second = None
+
+        for num in nums:
+            if first is None or num < first:
+                first = num
+            elif num > first:
+                if second is None or num < second:
+                    second = num
+                elif num > second:
+                    return True
+
+        return False
+
+
+"""
+Complexity:
+1. Time complexity: O(n) = O(n)
+2. Space complexity: O(1)
 """
