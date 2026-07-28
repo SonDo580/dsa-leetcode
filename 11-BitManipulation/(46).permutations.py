@@ -9,33 +9,47 @@ You can return the answer in any order.
 """
 Idea:
 - Use backtracking to generate all possible permutations. States needed:
-  . 'current': numbers in current permutations.
+  . 'current': current permutation being built.
   . 'used': track indices of used numbers
             (use set / boolean array / bitmask)
-- Valid result found when len(curr) = len(nums).
+- Valid result found when len(curr) = len(nums)
+  (included each number once).
+
+Represent 'used' with bitmask:
+- ith bit = 1 <-> nums[i] is included.
+- Get ith bit (to check if nums[i] is used): (used >> i) & 1
+- Flip ith bit (to include/exclude nums[i]): used & (1 << i)
 """
 
 
-def get_permutations(nums: list[int]) -> list[list[int]]:
-    n = len(nums)
-    ans: list[list[int]] = []
+def get_bit(n: int, i: int) -> int:
+    return (n >> i) & 1
 
-    def build(curr: list[int], used: list[bool]):
-        if len(curr) == n:
-            # Mutate 'curr' across 'build' calls -> clone when adding
-            ans.append(curr[:])
-            return
 
-        for i in range(n):
-            if not used[i]:
+def flip_bit(n: int, i: int) -> int:
+    return n & (1 << i)
+
+
+class Solution:
+    def permute(self, nums: list[int]) -> list[list[int]]:
+        n = len(nums)
+        ans: list[list[int]] = []
+
+        def build(curr: list[int], used: list[bool]):
+            if len(curr) == n:  # included each number once
+                # Mutate 'curr' across 'build' calls -> clone when adding
+                ans.append(curr[:])
+                return
+
+            for i in range(n):
+                if get_bit(used, i):
+                    continue
                 curr.append(nums[i])
-                used[i] = True
-                build(curr, used)
+                build(curr, flip_bit(used, i))
                 curr.pop()
-                used[i] = False
 
-    build(curr=[], used=[False] * n)
-    return ans
+        build(curr=[], used=0)
+        return ans
 
 
 """
@@ -58,9 +72,7 @@ Complexity:
 2. Space complexity: O(n)
 - recursion stack: O(n).
 - 'curr': O(n).
-- 'used': O(n).
 """
-
 
 
 # === Proof: n + n*(n - 1) + ... n! ~= e * n! ===
