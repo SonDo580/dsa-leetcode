@@ -28,18 +28,32 @@ The test cases are generated so that the answer fits in a 32-bit integer.
 
 """
 Analysis:
-- At each character i, there are 2 ways to decode:
-  . As single digit. Condition: s[i] != 0 
-  . As leading digit of a 2-digit number. 
-    Condition: i + 1 < len(s) and (s[i] == 1 or s[i] == 2 and s[i + 1] <= 6)
+- There are 2 ways to decode a character:
+  . As single digit (1 -> 9).
+  . As leading digit of a 2-digit number (10 -> 26).
 
+Identify DP problem:
+- Find total number of ways (to decode s).
+- Broken down into sequence of decisions at each character.
+- Multiple paths can reach the same state (see example above).
+
+Idea:
 - Let dp(i) be the number of ways to decode s[i..n-1] where n = len(s)
 - Recurrence relation:
-  . dp(i) = 0
-  . dp(i) += dp(i + 1) if s[i] != 0
-  . dp(i) += dp(i + 2) if i + 1 < len(s) and (s[i] == 1 or s[i] == 2 and s[i + 1] <= 6)
-- Base case: dp(n) = 1 (empty string)
-- The answer to the problem is dp(0)
+  . Init: dp(i) = 0 (remains 0 if cannot be decoded)
+  . If s[i] != 0
+    -> Can decode s[i] as single digit.
+       Remaining string to decode: s[i+1..n-1]
+    -> dp(i) += dp(i + 1) 
+  . If 10 <= int(s[i..i+1]) <= 26
+    -> Can decode s[i..i+1] as 2-digit number.
+       Remaining string to decode: s[i+2..n-1]
+    -> dp(i) += dp(i + 2)
+- Base case: dp(n) = 1 
+  . decided decoding for all characters -> found 1 valid way to decode.
+- The answer to the problem is dp(0).
+- Check 10 <= int(s[i..i+1]) <= 26:
+  . i + 1 < len(s) and (s[i] == "1" or s[i] == "2" and s[i + 1] <= "6")
 """
 
 # ===== Top-down DP =====
@@ -55,10 +69,10 @@ def num_encodings(s: str) -> int:
 
         count = 0
         if s[i] != "0":
-            # single digit
+            # as single digit
             count += dp(i + 1)
         if i + 1 < len(s) and (s[i] == "1" or s[i] == "2" and s[i + 1] <= "6"):
-            # 2 digits
+            # as 2-digit number
             count += dp(i + 2)
         return count
 
@@ -68,10 +82,10 @@ def num_encodings(s: str) -> int:
 """
 Complexity:
 - Let n = len(s)
+- Number of DP states: O(n)
 
-1. Time complexity: O(n) (each state is computed once)
-
-2. Space complexity: O(n) for memoization table and recursion stack
+1. Time complexity: O(n)
+2. Space complexity: O(n) for cache and recursion stack
 """
 
 
@@ -93,7 +107,6 @@ def num_encodings(s: str) -> int:
 """
 Complexity:
 1. Time complexity: O(n)
-
 2. Space complexity: O(n) for 'dp'
 """
 
@@ -118,6 +131,5 @@ def num_encodings(s: str) -> int:
 """
 Complexity:
 1. Time complexity: O(n)
-
 2. Space complexity: O(1)
 """

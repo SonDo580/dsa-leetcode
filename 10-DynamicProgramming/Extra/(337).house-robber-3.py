@@ -17,19 +17,19 @@ Analysis:
 - At each node, we can either:
   . rob it -> accumulate the money, cannot rob the left and right houses.
   . skip it -> can rob the left and right houses.
-- We can reach a state (node, can_rob) through multiple paths -> use DP.
-"""
+- We can reach the same (node, can_rob) state through multiple paths.
+  -> cache results to avoid recomputation (DP).
 
-"""
+Idea:
 - Let dp(node, can_rob) be the maximum of money that can be robbed from current subtree,
   where can_rob denotes whether we can rob current node.
-- The result is dp(root, True).
+- Result: dp(root, True).
 - At each node:
-  . if not can_rob: can rob the left and right houses
-  . if can_rob:
+  . If can_rob = False: 
+    . must skip current house -> can rob the left and right houses
+  . If can_rob = True: pick the action that results in more money
     . skip current house -> can rob the left and right houses
     . rob current house -> accumulate money, cannot rob the left and right houses
-    . pick the action that results in more money.
 - Base case: node is None -> amount = 0
 """
 
@@ -41,7 +41,7 @@ class TreeNode:
         self.right: TreeNode | None = None
 
 
-# ===== Top-down =====
+# ===== Top-down DP =====
 from functools import cache
 
 
@@ -64,24 +64,23 @@ def rob(root: TreeNode | None) -> int:
 """
 Complexity:
 - Let n = number of nodes
-      h = tree's height
+      h = tree's height = O(n)
 
 1. Time complexity: O(n * 2) = O(n)
 
 2. Space complexity: O(n)
-- memoization table: O(n * 2)
+- cache: O(n * 2)
 - recursion stack: O(h)
 """
 
 
-# ===== Optimize space: Post-order traversal =====
+# ===== Optimize: Post-order traversal without memoization =====
 """
-- Calculate the results for children before parent.
-  Each node is visited exactly once.
-  -> Pass the results upward without memoization.
-- Instead of using a function with a can_rob boolean, return 2 values:
+- Instead of using boolean parameter 'can_rob', return 2 values:
   . take: max money if we rob this node.
   . skip: max money if we skip this node.
+- Calculate the results for children before parent.
+  -> Pass results upward without memoization.
 """
 
 
@@ -108,8 +107,6 @@ def rob(root: TreeNode | None) -> int:
 
 """
 Complexity:
-
 1. Time complexity: O(n) (each node is visited exactly once)
-
 2. Space complexity: O(h) for recursion stack
 """

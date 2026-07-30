@@ -10,21 +10,24 @@ Note that the same word in the dictionary may be reused multiple times in the se
 """
 Idea:
 - Try if we can segment 1 word, then recursively do the same with the remaining part.
-- Each part may be encountered multiple times -> memoize the result to avoid recomputation.
+- Multiple paths can lead to the same state.
+  Example: "catsanddog" 
+  . "cat" -> "sand" -> "dog"
+  . "cats" -> "and" -> "dog"
+  -> Cache results to avoid recomputation (DP).
 
 DP:
 - Let dp(i) returns True if s[i..n-1] can be segmented into words in 'wordDict'.
-  Then dp(0) represents the results for the full string.
-- Try all s[i..j] to until a word in dictionary is found.
+- Result for full string: dp(0).
+- For j >= i, try until s[i..j] form a word in dictionary.
   Recursively do the same with s[j+1..n-1].
--> Recurrence relation:
-  . dp(i) = any(word[i:j+1] in wordDict AND dp(j + 1) == True) 
-- If no words can be segmented from the current position, return False.
-- Base case: i == n -> segmented s fully -> return True
+  If no words can be segmented from i, return False.
+  -> Recurrence relation:
+  . dp(i) = any(word[i..j] in wordDict AND dp(j + 1) == True) 
+- Base case: i == n -> fully segmented s -> return True
 
 Optimization:
-- Convert the list 'wordDict' to a set for fast lookup.
-  We can also use a trie.
+- Convert the list 'wordDict' to a set or trie for fast lookup.
 - Record max length of words in 'wordDict' for upper bound of j 
   . j = min(i + L, n)
 
@@ -68,14 +71,13 @@ Complexity:
 - Convert 'wordDict' to set: O(m * L)
 - Find max word length in 'wordDict': O(m)
 - Number of DP states: O(n)
-  Each DP state has a for loop:
-  . number of iterations: O(L)
-  . string slicing (word): O(L)
-  -> total DP: O(n * L^2)
+  Each DP state has a for loop: O(L) iterations
+  String slicing in each iteration: O(L)
+  -> Total DP work: O(n * L^2)
 
 2. Space complexity: O(m*L + n)
 - 'word_set': O(m * L)
-- dp's memoization table: O(n)
+- dp's cache: O(n)
 - dp's recursion stack: O(n)
 """
 
@@ -158,17 +160,15 @@ def word_break(s: str, word_dict: list[str]) -> bool:
 Complexity:
 
 1. Time complexity: O(m*L + n*L)
-- Build trie from 'wordDict': O(m * L)
-- Find max word length in 'wordDict': O(m)
+- Build trie from 'wordDict' (and find max word length): O(m * L)
 - Number of DP states: O(n)
-  Each DP state has a for loop:
-  . number of iterations: O(L)
-  . character matching in trie: O(1)
-  -> total DP: O(n * L)
+  Each DP state has a for loop: O(L) iterations
+  Character matching in each iteration: O(1)
+  -> Total DP work: O(n * L)
 
 2. Space complexity: O(m*L + n)
 - trie: O(m * L)
-- dp's memoization table: O(n)
+- dp's cache: O(n)
 - dp's recursion stack: O(n)
 """
 
