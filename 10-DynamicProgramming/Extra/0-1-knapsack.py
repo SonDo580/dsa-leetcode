@@ -98,8 +98,9 @@ def knap_sack_bu(W: int, val: list[int], wt: list[int]) -> int:
             dp[i][w] = dp[i + 1][w]
 
             # option 2: take ith item
-            if w >= wt[i]:
-                dp[i][w] = max(dp[i][w], dp[i + 1][w - wt[i]] + val[i])
+            if w < wt[i]:
+                break
+            dp[i][w] = max(dp[i][w], dp[i + 1][w - wt[i]] + val[i])
 
             if i == 0:
                 break  # only need to populate dp[0][W]
@@ -121,7 +122,7 @@ Complexity:
 """
 
 
-def knap_sack_bu_v1(W: int, val: list[int], wt: list[int]) -> int:
+def knap_sack_bu_v2(W: int, val: list[int], wt: list[int]) -> int:
     n = len(val)  # = len(wt)
 
     # dp[i][w]: max value obtainable from items[i..n-1] given capacity w
@@ -134,8 +135,10 @@ def knap_sack_bu_v1(W: int, val: list[int], wt: list[int]) -> int:
 
         # option 2: take ith item
         for w in range(W, -1, -1):
-            if w >= wt[i]:
-                next_dp[w] = max(next_dp[w], dp[w - wt[i]] + val[i])
+            if w < wt[i]:
+                break
+            next_dp[w] = max(next_dp[w], dp[w - wt[i]] + val[i])
+
             if i == 0:
                 break  # only need to populate dp[0][W]
 
@@ -160,7 +163,7 @@ Complexity:
 """
 
 
-def knap_sack_bu_v2(W: int, val: list[int], wt: list[int]) -> int:
+def knap_sack_bu_v3(W: int, val: list[int], wt: list[int]) -> int:
     n = len(val)  # = len(wt)
 
     # dp[i][w]: max value obtainable from items[i..n-1] given capacity w
@@ -172,9 +175,11 @@ def knap_sack_bu_v2(W: int, val: list[int], wt: list[int]) -> int:
 
         # option 2: take ith item
         for w in range(W, -1, -1):
-            if w >= wt[i]:
-                # overwrite is safe (dp[i][lower_w] entries don't use dp[i+1][w])
-                dp[w] = max(dp[w], dp[w - wt[i]] + val[i])
+            if w < wt[i]:
+                break
+
+            # overwrite is safe (dp[i][lower_w] entries don't use dp[i+1][w])
+            dp[w] = max(dp[w], dp[w - wt[i]] + val[i])
 
             if i == 0:
                 break  # only need to populate dp[0][W]
@@ -206,5 +211,5 @@ if __name__ == "__main__":
         (3, [1, 2, 3], [4, 5, 6], 0),
         (5, [10, 40, 30, 50], [5, 4, 2, 3], 80),
     ]:
-        for fn in [knap_sack_td, knap_sack_bu, knap_sack_bu_v1, knap_sack_bu_v2]:
+        for fn in [knap_sack_td, knap_sack_bu, knap_sack_bu_v2, knap_sack_bu_v3]:
             assert fn(W, val, wt) == expected
